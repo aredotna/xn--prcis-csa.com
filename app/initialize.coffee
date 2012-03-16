@@ -8,11 +8,10 @@ class exports.Application extends BrunchApplication
 
   initialize: ->
     @loading().start()
-    $.getJSON 'http://are.na/api/v1/channels/damon-zucconi.json?callback=?', (data) =>
-      
+    $.getJSON "http://are.na/api/v1/channels/#{$.getParam('source')}.json?callback=?", (data) =>
       @channel  = new Channel(data)
-      @blocks   = new Blocks(@channel.get('blocks'), {channel: 'what'})
-
+      @blocks   = new Blocks(@channel.get('blocks'))
+      
       @homeView = new HomeView(model: @channel, collection: @blocks)
       @router   = new MainRouter
       
