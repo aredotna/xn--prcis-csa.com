@@ -1,0 +1,44 @@
+<div id="content">
+  <h1><%= @channel.title %></h1>
+
+  <% for block in @blocks: %>
+    <hr />
+  
+    <% switch block.block_type %>
+      <% when 'Image': %>
+        <h3><%= block.title %></h3>
+        <img src="<%= block.image_display %>" alt="<%= block.title %>" />
+        <div class="content">
+          <%- block.content %>
+        </div>
+      <% end %>
+      
+      <% when 'Text': %>
+        <h3><%= block.title %></h3>
+        <div class="content">
+          <%- block.content %>
+        </div>
+      <% end %>
+
+      <% when 'Media': %>
+        <h3><%= block.title %></h3>
+        <div class="embed">
+          <%- block.embed_html %>
+        </div>
+        <div class="content">
+          <%- block.content %>
+        </div>
+      <% end %>
+
+      <% when 'Link': %>
+        <h3><%= block.title %></h3>
+        <img src="<%= block.image_display %>" alt="<%= block.title %>" />
+        <div class="content">
+          <%- block.content %>
+        </div>
+      <% end %>
+    <% end %>
+
+  <% end %>
+
+</div>
