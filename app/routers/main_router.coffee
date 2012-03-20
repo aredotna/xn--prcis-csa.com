@@ -1,6 +1,10 @@
 class exports.MainRouter extends Backbone.Router
   routes:
-    '': 'home'
+    ''          : 'collection'
+    'view/:id'  : 'single'
 
-  home: ->
-    $('body').html app.homeView.render().el
+  collection: ->
+    $('body').html app.collectionView.render().el
+
+  single: ->
+    $('body').html app.singleView.render().el

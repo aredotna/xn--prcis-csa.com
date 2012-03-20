@@ -202,6 +202,10 @@ table { border-collapse: collapse; border-spacing: 0; }
 td { vertical-align: top; }
 body{font-size:12px;line-height:18px;color:#111;background:#fff;font-family:sans-serif;padding:5%;}
 body.loading{background:#fff url("../images/load.gif") top left no-repeat}
+#content{text-align:center}
+.thumb{display:inline-block;height:220px;line-height:220px;vertical-align:middle;margin-right:20px;}
+.thumb img{padding:3px;background:#eee;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;border:1px solid #cacaca}
+.thumb:hover img{background:#fff;border-color:#09c}
 /* ==|== non-semantic helper classes ========================================
    Please define your styles before this section.
    ========================================================================== */

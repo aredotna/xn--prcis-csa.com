@@ -1,3 +1,12 @@
-<div class='grid'>
-
+<div id="content">
+  <h1><%= @channel.title %></h1>
+  <% for block in @blocks: %>
+    <% if block.image_thumb: %>
+      <div class="thumb">
+        <div class="image">
+          <img src="<%= block.image_thumb %>" alt="<%= block.title %>" />
+        </div>
+      </div>
+    <% end %>
+  <% end %>
 </div>
