@@ -5,12 +5,9 @@ class exports.CollectionView extends Backbone.View
     # Set the page title
     document.title = @model.get('title')
 
-    # Get the desired format from the paramter or default to 'list'
-    # Possible values: ['list', 'grid', 'slideshow', 'scatter']
-    format = $.getParam('format')
-    format ?= 'list'
-    @template = require("./templates/#{format}")
+    # Possible values: ['compact', 'list', 'grid', 'slideshow', 'scatter']
+    @template = require("./templates/#{@options.mode}")
 
   render: ->
-    $(@el).html @template channel: @model.toJSON(), blocks: @collection.toJSON()
+    $(@el).html(@template(channel: @model.toJSON(), blocks: @collection.toJSON()))
     this

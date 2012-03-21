@@ -1,0 +1,9 @@
+<% if @block.block_type is 'Image': %>
+  <% if @block.title: %>
+    <h1><%= @block.title %></h1>
+  <% end %>
+  <img src="<%= @block.image_display %>" alt="<%= @block.title %>" />
+  <div class="content">
+    <%- @block.content %>
+  </div>
+<% end %>

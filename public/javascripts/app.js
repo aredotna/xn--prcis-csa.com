@@ -48,6 +48,43 @@
     };
   }
 }).call(this);(this.require.define({
+  "views/collection_view": function(exports, require, module) {
+    (function() {
+  var __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  exports.CollectionView = (function(_super) {
+
+    __extends(CollectionView, _super);
+
+    function CollectionView() {
+      CollectionView.__super__.constructor.apply(this, arguments);
+    }
+
+    CollectionView.prototype.id = 'collection';
+
+    CollectionView.prototype.initialize = function() {
+      document.title = this.model.get('title');
+      return this.template = require("./templates/" + this.options.mode);
+    };
+
+    CollectionView.prototype.render = function() {
+      $(this.el).html(this.template({
+        channel: this.model.toJSON(),
+        blocks: this.collection.toJSON()
+      }));
+      return this;
+    };
+
+    return CollectionView;
+
+  })(Backbone.View);
+
+}).call(this);
+
+  }
+}));
+(this.require.define({
   "helpers": function(exports, require, module) {
     (function() {
 
@@ -68,71 +105,6 @@
     return BrunchApplication;
 
   })();
-
-}).call(this);
-
-  }
-}));
-(this.require.define({
-  "initialize": function(exports, require, module) {
-    (function() {
-  var Blocks, BrunchApplication, Channel, CollectionView, MainRouter,
-    __hasProp = Object.prototype.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
-
-  BrunchApplication = require('helpers').BrunchApplication;
-
-  MainRouter = require('routers/main_router').MainRouter;
-
-  CollectionView = require('views/collection_view').CollectionView;
-
-  Channel = require('models/channel').Channel;
-
-  Blocks = require('collections/blocks').Blocks;
-
-  exports.Application = (function(_super) {
-
-    __extends(Application, _super);
-
-    function Application() {
-      Application.__super__.constructor.apply(this, arguments);
-    }
-
-    Application.prototype.initialize = function() {
-      var source,
-        _this = this;
-      source = $.getParam('source');
-      if (source == null) source = 'frequently-asked-questions-faqs';
-      this.loading().start();
-      return $.getJSON("http://are.na/api/v1/channels/" + source + ".json?callback=?", function(data) {
-        _this.channel = new Channel(data);
-        _this.blocks = new Blocks(_this.channel.get('blocks'));
-        _this.collectionView = new CollectionView({
-          model: _this.channel,
-          collection: _this.blocks
-        });
-        _this.router = new MainRouter;
-        Backbone.history.start();
-        return _this.loading().stop();
-      });
-    };
-
-    Application.prototype.loading = function() {
-      return {
-        start: function() {
-          return $('body').addClass('loading');
-        },
-        stop: function() {
-          return $('body').removeClass('loading');
-        }
-      };
-    };
-
-    return Application;
-
-  })(BrunchApplication);
-
-  window.app = new exports.Application;
 
 }).call(this);
 
@@ -190,8 +162,11 @@
 (this.require.define({
   "models/channel": function(exports, require, module) {
     (function() {
-  var __hasProp = Object.prototype.hasOwnProperty,
+  var Blocks,
+    __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  Blocks = require('collections/blocks').Blocks;
 
   exports.Channel = (function(_super) {
 
@@ -200,6 +175,37 @@
     function Channel() {
       Channel.__super__.constructor.apply(this, arguments);
     }
+
+    Channel.prototype.url = function() {
+      return "http://are.na/api/v1/channels/" + (this.get('slug')) + ".json?callback=?";
+    };
+
+    Channel.prototype.maybeLoad = function(slug) {
+      var _this = this;
+      if (slug === this.get('slug')) {
+        return true;
+      } else {
+        this.clear();
+        app.loading().start();
+        this.set('slug', slug);
+        this.set('fetching', true);
+        return this.fetch({
+          success: function() {
+            _this.setupBlocks();
+            _this.set('fetching', false);
+            app.loading().stop();
+            return true;
+          },
+          error: function(error) {
+            return console.log("Error: " + error);
+          }
+        });
+      }
+    };
+
+    Channel.prototype.setupBlocks = function() {
+      return this.blocks = new Blocks(this.get('blocks'));
+    };
 
     return Channel;
 
@@ -212,8 +218,15 @@
 (this.require.define({
   "routers/main_router": function(exports, require, module) {
     (function() {
-  var __hasProp = Object.prototype.hasOwnProperty,
+  var Channel, CollectionView, SingleView,
+    __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  Channel = require('models/channel').Channel;
+
+  SingleView = require('views/single_view').SingleView;
+
+  CollectionView = require('views/collection_view').CollectionView;
 
   exports.MainRouter = (function(_super) {
 
@@ -225,15 +238,37 @@
 
     MainRouter.prototype.routes = {
       '': 'collection',
-      'view/:id': 'single'
+      '/:slug': 'collection',
+      '/:slug/mode::mode': 'collection',
+      '/:slug/view::id': 'single'
     };
 
-    MainRouter.prototype.collection = function() {
-      return $('body').html(app.collectionView.render().el);
+    MainRouter.prototype.initialize = function() {
+      return this.channel = new Channel();
     };
 
-    MainRouter.prototype.single = function() {
-      return $('body').html(app.singleView.render().el);
+    MainRouter.prototype.collection = function(slug, mode) {
+      var _this = this;
+      if (mode == null) mode = 'grid';
+      return $.when(this.channel.maybeLoad(slug)).then(function() {
+        _this.collectionView = new CollectionView({
+          model: _this.channel,
+          collection: _this.channel.blocks,
+          mode: mode
+        });
+        return $('body').html(_this.collectionView.render().el);
+      });
+    };
+
+    MainRouter.prototype.single = function(slug, id) {
+      var _this = this;
+      return $.when(this.channel.maybeLoad(slug)).then(function() {
+        _this.singleView = new SingleView({
+          model: _this.channel.blocks.get(id),
+          collection: _this.channel.blocks
+        });
+        return $('body').html(_this.singleView.render().el);
+      });
     };
 
     return MainRouter;
@@ -245,38 +280,80 @@
   }
 }));
 (this.require.define({
-  "views/collection_view": function(exports, require, module) {
+  "initialize": function(exports, require, module) {
+    (function() {
+  var BrunchApplication, MainRouter,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  BrunchApplication = require('helpers').BrunchApplication;
+
+  MainRouter = require('routers/main_router').MainRouter;
+
+  exports.Application = (function(_super) {
+
+    __extends(Application, _super);
+
+    function Application() {
+      Application.__super__.constructor.apply(this, arguments);
+    }
+
+    Application.prototype.initialize = function() {
+      this.loading().start();
+      return this.router = new MainRouter;
+    };
+
+    Application.prototype.loading = function() {
+      return {
+        start: function() {
+          return $('body').addClass('loading');
+        },
+        stop: function() {
+          return $('body').removeClass('loading');
+        }
+      };
+    };
+
+    return Application;
+
+  })(BrunchApplication);
+
+  window.app = new exports.Application;
+
+}).call(this);
+
+  }
+}));
+(this.require.define({
+  "views/single_view": function(exports, require, module) {
     (function() {
   var __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-  exports.CollectionView = (function(_super) {
+  exports.SingleView = (function(_super) {
 
-    __extends(CollectionView, _super);
+    __extends(SingleView, _super);
 
-    function CollectionView() {
-      CollectionView.__super__.constructor.apply(this, arguments);
+    function SingleView() {
+      SingleView.__super__.constructor.apply(this, arguments);
     }
 
-    CollectionView.prototype.id = 'collection';
+    SingleView.prototype.id = 'single';
 
-    CollectionView.prototype.initialize = function() {
-      var format;
+    SingleView.prototype.initialize = function() {
       document.title = this.model.get('title');
-      format = $.getParam('format');
-      if (format == null) format = 'list';
-      return this.template = require("./templates/" + format);
+      return this.template = require("./templates/single");
     };
 
-    CollectionView.prototype.render = function() {
+    SingleView.prototype.render = function(id) {
       $(this.el).html(this.template({
-        channel: this.model.toJSON(),
+        block: this.model.toJSON(),
         blocks: this.collection.toJSON()
       }));
       return this;
     };
 
-    return CollectionView;
+    return SingleView;
 
   })(Backbone.View);
 
@@ -338,11 +415,15 @@
         block = _ref[_i];
         __out.push('\n    ');
         if (block.image_thumb) {
-          __out.push('\n      <div class="thumb">\n        <div class="image">\n          <img src="');
+          __out.push('\n      <div class="thumb">\n        <div class="image">\n          <a href="/#/');
+          __out.push(__sanitize(this.channel.slug));
+          __out.push('/view:');
+          __out.push(__sanitize(block.id));
+          __out.push('">\n            <img src="');
           __out.push(__sanitize(block.image_thumb));
           __out.push('" alt="');
           __out.push(__sanitize(block.title));
-          __out.push('" />\n        </div>\n      </div>\n    ');
+          __out.push('" />\n          </a>\n        </div>\n      </div>\n    ');
         }
         __out.push('\n  ');
       }
@@ -507,6 +588,72 @@
     (function() {
     
       __out.push('<div id="spinContainer"></div>\nLoading');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}
+  }
+}));
+(this.require.define({
+  "views/templates/single": function(exports, require, module) {
+    module.exports = function (__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+    
+      if (this.block.block_type === 'Image') {
+        __out.push('\n  ');
+        if (this.block.title) {
+          __out.push('\n    <h1>');
+          __out.push(__sanitize(this.block.title));
+          __out.push('</h1>\n  ');
+        }
+        __out.push('\n  <img src="');
+        __out.push(__sanitize(this.block.image_display));
+        __out.push('" alt="');
+        __out.push(__sanitize(this.block.title));
+        __out.push('" />\n  <div class="content">\n    ');
+        __out.push(this.block.content);
+        __out.push('\n  </div>\n');
+      }
     
     }).call(this);
     

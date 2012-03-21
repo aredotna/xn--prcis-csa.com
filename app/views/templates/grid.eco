@@ -4,7 +4,9 @@
     <% if block.image_thumb: %>
       <div class="thumb">
         <div class="image">
-          <img src="<%= block.image_thumb %>" alt="<%= block.title %>" />
+          <a href="/#/<%= @channel.slug %>/view:<%= block.id %>">
+            <img src="<%= block.image_thumb %>" alt="<%= block.title %>" />
+          </a>
         </div>
       </div>
     <% end %>
