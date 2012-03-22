@@ -201,8 +201,11 @@ input:invalid, textarea:invalid { background-color: #f0dddd; }
 table { border-collapse: collapse; border-spacing: 0; }
 td { vertical-align: top; }
 body{font-size:12px;line-height:18px;color:#111;background:#fff;font-family:sans-serif;padding:5%;}
+body a{color:#000}
+body.single{background:#000;color:#eee;}
+body.single a{color:#fff}
 body.loading{background:#fff url("../images/load.gif") top left no-repeat}
-#content{text-align:center}
+.content{text-align:left}
 .thumb{display:inline-block;height:220px;line-height:220px;vertical-align:middle;margin-right:20px}
 /* ==|== non-semantic helper classes ========================================
    Please define your styles before this section.

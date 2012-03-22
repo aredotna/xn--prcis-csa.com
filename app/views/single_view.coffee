@@ -2,11 +2,20 @@ class exports.SingleView extends Backbone.View
   id: 'single'
 
   initialize: ->
-    # # Set the page title
-    document.title = @model.get('title')
-
+    # Set the page title
+    document.title = 
+      if @model.get('title')
+        "#{@options.channel.get('title')}: #{@model.get('title')}"
+      else
+        @options.channel.get('title')
+    # Set template
     @template = require("./templates/single")
 
   render: (id) ->
-    $(@el).html @template block: @model.toJSON(), blocks: @collection.toJSON()
+    $(@el).html @template
+      channel: @options.channel.toJSON()
+      block: @model.toJSON()
+      blocks: @collection.toJSON()
+      next: @collection.next(@model)
+      prev: @collection.prev(@model)
     this

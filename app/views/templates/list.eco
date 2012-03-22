@@ -1,42 +1,4 @@
 <div id="content">
   <h1><%= @channel.title %></h1>
-
-  <% for block in @blocks: %>
-    <hr />
-
-    <% if block.block_type is 'Image': %>
-      <h3><%= block.title %></h3>
-      <img src="<%= block.image_display %>" alt="<%= block.title %>" />
-      <div class="content">
-        <%- block.content %>
-      </div>
-    <% end %>
-    
-    <% if block.block_type is 'Text': %>
-      <h3><%= block.title %></h3>
-      <div class="content">
-        <%- block.content %>
-      </div>
-    <% end %>
-
-    <% if block.block_type is 'Media': %>
-      <h3><%= block.title %></h3>
-      <div class="embed">
-        <%- block.embed_html %>
-      </div>
-      <div class="content">
-        <%- block.content %>
-      </div>
-    <% end %>
-
-    <% if block.block_type is 'Link': %>
-      <h3><%= block.title %></h3>
-      <img src="<%= block.image_display %>" alt="<%= block.title %>" />
-      <div class="content">
-        <%- block.content %>
-      </div>
-    <% end %>
-
-  <% end %>
-
+  <div id="blocks"></div>
 </div>

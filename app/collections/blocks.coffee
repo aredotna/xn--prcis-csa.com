@@ -5,3 +5,13 @@ class exports.Blocks extends Backbone.Collection
   
   # comparator: (block) ->
   #     block.channelConnection().position
+
+  next: (model) ->
+    i = @at @indexOf(model)
+    return false if `undefined` is i or i < 0
+    @at @indexOf(model) + 1
+
+  prev: (model) ->
+    i = @at @indexOf(model)
+    return false if `undefined` is i or i < 1
+    @at @indexOf(model) - 1
