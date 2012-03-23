@@ -15,6 +15,7 @@ class exports.CollectionView extends Backbone.View
     
   addOne: (block) =>
     view = new BlockView
+      mode        : @options.mode
       model       : block
       collection  : @model.blocks
       channel     : @model
@@ -25,5 +26,7 @@ class exports.CollectionView extends Backbone.View
     $(@el).html @template
       channel : @model.toJSON()
       blocks  : @collection.toJSON()
+
     @addAll()
+
     this

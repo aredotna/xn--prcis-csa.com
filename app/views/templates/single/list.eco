@@ -3,14 +3,18 @@
     <% if @prev: %>
       <a href="/#/<%= @channel.slug %>/view:<%= @prev.id %>">Previous</a>
     <% end %>
-    <a href="/#/<%= @channel.slug %>">Up</a>
+    <% if @channel.mode: %>
+      <a href="/#/<%= @channel.slug %>/mode:<%= @channel.mode %>">Up</a>
+    <% else: %>
+      <a href="/#/<%= @channel.slug %>">Up</a>
+    <% end %>
     <% if @next: %>
       <a href="/#/<%= @channel.slug %>/view:<%= @next.id %>">Next</a>
     <% end %>
   </nav>
 <% end %>
 
-<div id="block_<%= @block.id %>" class="block full <%= @block.block_type.toLowerCase() %>" data-type="<%= @block.block_type %>">
+<div id="block_<%= @block.id %>" class="full <%= @block.block_type.toLowerCase() %>" data-type="<%= @block.block_type %>">
 
   <!-- TYPE-SPECIFIC OUTPUT: -->
   <% if @block.block_type is 'Media': %>
@@ -66,6 +70,26 @@
         </div>
       </div>
     <% end %>
+
+    <dl class='small meta block_meta'>
+      <% if @block.link_url: %>
+        <dt>URL:</dt>
+        <dd><a href="<%= @block.link_url %>" target="_blank"><%= @block.link_url %></a></dd>
+      <% end %>
+
+      <% if @block.image_remote_url: %>
+        <dt>Source:</dt>
+        <dd><a href="<%= @block.image_remote_url %>" class="url external" target="_blank"><%= @block.image_remote_url %></a></dd>
+      <% end %>
+      
+      <% if @block.embed_source_url: %>
+        <dt>Source:</dt>
+        <dd><a href="<%= @block.embed_source_url %>" class="url external" target="_blank"><%= @block.embed_source_url %></a></dd>
+      <% end %>
+
+      <dt>Added by:</dt>
+      <dd><%= @block.username %></dd>
+    </dl>
   </div>
   
 </div><!-- #block -->

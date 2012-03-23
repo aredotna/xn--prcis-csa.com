@@ -13,7 +13,10 @@ class exports.MainRouter extends Backbone.Router
   initialize: ->
     @channel = new Channel()
 
+
   collection: (slug, mode = 'grid') ->
+    @channel.set {'mode', mode}
+
     $.when(@channel.maybeLoad slug).then =>
       @collectionView = new CollectionView
         model       : @channel

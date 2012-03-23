@@ -1,0 +1,13 @@
+<div class="thumb">
+  <% if @block.image_thumb: %>
+    <div class="image">
+      <a href="/#/<%= @channel.slug %>/view:<%= @block.id %>">
+        <img src="<%= @block.image_thumb %>" alt="<%= @block.title %>" />
+      </a>
+    </div>
+  <% else if @block.title: %>
+    <a href="/#/<%= @channel.slug %>/view:<%= @block.id %>"><%= @block.title %></a>
+  <% else: %>
+    <a href="/#/<%= @channel.slug %>/view:<%= @block.id %>">Untitled</a>
+  <% end %>
+</div>

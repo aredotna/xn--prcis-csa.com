@@ -1,4 +1,4 @@
 <div id="content">
   <h1><%= @channel.title %></h1>
-  <div id="blocks"></div>
+  <div id="blocks" class="list"></div>
 </div>

@@ -1,8 +1,12 @@
-template = require './templates/single/single'
-
 class exports.BlockView extends Backbone.View
-  render: (id) ->
-    $(@el).html template
+  className: 'block'
+
+  initialize: ->
+    @template = require "./templates/single/#{@options.mode}"
+  
+  render: ->
+    $(@el).html @template
+      mode    : @options.mode
       channel : @options.channel.toJSON()
       block   : @model.toJSON()
     this

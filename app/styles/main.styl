@@ -3,17 +3,21 @@
 body
   font-size: 14px
   line-height: 18px
-  color: #111
-  background: #fff
   font-family: serif
   padding: 5%
-  a
-    color: #000
+  // Collection
+  &.collection
+    color: #111
+    background: #fff
+    a
+      color: #000
+  // Single
   &.single
     background: #000
     color: #eee
     a
       color: #fff
+  // Loading
   &.loading
     background: #fff url('../images/load.gif') top left no-repeat
 
@@ -32,16 +36,31 @@ nav
   font-size: 16px
   text-align: left
 
-.gallery
-  text-align: center
 
-.thumb
-  display: inline-block
-  height: 250px
-  width: 250px
-  line-height: 250px
+#blocks.list .block, #single.block
+  margin: 20px 0
+  padding-bottom: 20px
+  border-bottom: 1px solid #000
+  .image, .link, .media
+    text-align: center
+#blocks.grid
   text-align: center
-  vertical-align: middle
+  .block
+    display: inline-block
+    height: 250px
+    width: 250px
+    line-height: 250px
+    text-align: center
+    vertical-align: middle
 
-.block.image, .block.link, .block.media
-  text-align: center
+.metadata dl
+  dt
+    font-weight: bold
+  dt, dd
+    line-height: 16px
+    font-size: 12px
+    font-family: sans-serif
+    text-align: left
+    margin: 0
+    a
+      text-decoration: none

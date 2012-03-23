@@ -1,8 +1,9 @@
-template    = require './templates/single/single'
+template    = require './templates/single/list'
 {BlockView} = require 'views/block_view'
 
 class exports.SingleView extends BlockView
   id: 'single'
+  className: 'block'
 
   initialize: ->
     # Set the page title
