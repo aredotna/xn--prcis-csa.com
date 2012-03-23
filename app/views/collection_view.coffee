@@ -8,7 +8,7 @@ class exports.CollectionView extends Backbone.View
     document.title = @model.get 'title'
 
     # Possible values: ['compact', 'list', 'grid', 'slideshow', 'scatter']
-    @template = require "./templates/#{@options.mode}"
+    @template = require "./templates/collection/#{@options.mode}"
 
   addAll: ->
     @collection.each @addOne

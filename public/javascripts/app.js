@@ -70,7 +70,7 @@
 
     CollectionView.prototype.initialize = function() {
       document.title = this.model.get('title');
-      return this.template = require("./templates/" + this.options.mode);
+      return this.template = require("./templates/collection/" + this.options.mode);
     };
 
     CollectionView.prototype.addAll = function() {
@@ -368,7 +368,7 @@
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-  template = require('./templates/single');
+  template = require('./templates/single/single');
 
   BlockView = require('views/block_view').BlockView;
 
@@ -386,6 +386,17 @@
       return document.title = this.model.get('title') ? "" + (this.options.channel.get('title')) + ": " + (this.model.get('title')) : this.options.channel.get('title');
     };
 
+    SingleView.prototype.render = function(id) {
+      $(this.el).html(template({
+        channel: this.options.channel.toJSON(),
+        block: this.model.toJSON(),
+        blocks: this.collection.toJSON(),
+        next: this.collection.next(this.model),
+        prev: this.collection.prev(this.model)
+      }));
+      return this;
+    };
+
     return SingleView;
 
   })(BlockView);
@@ -395,7 +406,40 @@
   }
 }));
 (this.require.define({
-  "views/templates/grid": function(exports, require, module) {
+  "views/block_view": function(exports, require, module) {
+    (function() {
+  var template,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  template = require('./templates/single/single');
+
+  exports.BlockView = (function(_super) {
+
+    __extends(BlockView, _super);
+
+    function BlockView() {
+      BlockView.__super__.constructor.apply(this, arguments);
+    }
+
+    BlockView.prototype.render = function(id) {
+      $(this.el).html(template({
+        channel: this.options.channel.toJSON(),
+        block: this.model.toJSON()
+      }));
+      return this;
+    };
+
+    return BlockView;
+
+  })(Backbone.View);
+
+}).call(this);
+
+  }
+}));
+(this.require.define({
+  "views/templates/collection/grid": function(exports, require, module) {
     module.exports = function (__obj) {
   if (!__obj) __obj = {};
   var __out = [], __capture = function(callback) {
@@ -437,11 +481,11 @@
     (function() {
       var block, _i, _len, _ref;
     
-      __out.push('<div id="content">\n  <h1>');
+      __out.push('<h1>\n  ');
     
       __out.push(__sanitize(this.channel.title));
     
-      __out.push('</h1>\n  ');
+      __out.push('\n</h1>\n\n<div class="gallery">\n  ');
     
       _ref = this.blocks;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -472,7 +516,7 @@
   }
 }));
 (this.require.define({
-  "views/templates/list": function(exports, require, module) {
+  "views/templates/collection/list": function(exports, require, module) {
     module.exports = function (__obj) {
   if (!__obj) __obj = {};
   var __out = [], __capture = function(callback) {
@@ -528,7 +572,7 @@
   }
 }));
 (this.require.define({
-  "views/templates/single": function(exports, require, module) {
+  "views/templates/single/single": function(exports, require, module) {
     module.exports = function (__obj) {
   if (!__obj) __obj = {};
   var __out = [], __capture = function(callback) {
@@ -569,43 +613,41 @@
   (function() {
     (function() {
     
-      __out.push('<nav>\n  ');
-    
-      if (this.prev) {
+      if (this.prev || this.next) {
+        __out.push('\n  <nav>\n    ');
+        if (this.prev) {
+          __out.push('\n      <a href="/#/');
+          __out.push(__sanitize(this.channel.slug));
+          __out.push('/view:');
+          __out.push(__sanitize(this.prev.id));
+          __out.push('">Previous</a>\n    ');
+        }
         __out.push('\n    <a href="/#/');
         __out.push(__sanitize(this.channel.slug));
-        __out.push('/view:');
-        __out.push(__sanitize(this.prev.id));
-        __out.push('">Previous</a>\n  ');
+        __out.push('">Up</a>\n    ');
+        if (this.next) {
+          __out.push('\n      <a href="/#/');
+          __out.push(__sanitize(this.channel.slug));
+          __out.push('/view:');
+          __out.push(__sanitize(this.next.id));
+          __out.push('">Next</a>\n    ');
+        }
+        __out.push('\n  </nav>\n');
       }
     
-      __out.push('\n  <a href="/#/');
-    
-      __out.push(__sanitize(this.channel.slug));
-    
-      __out.push('">Up</a>\n  ');
-    
-      if (this.next) {
-        __out.push('\n    <a href="/#/');
-        __out.push(__sanitize(this.channel.slug));
-        __out.push('/view:');
-        __out.push(__sanitize(this.next.id));
-        __out.push('">Next</a>\n  ');
-      }
-    
-      __out.push('\n</nav>\n\n<div id="block_');
+      __out.push('\n\n<div id="block_');
     
       __out.push(__sanitize(this.block.id));
     
       __out.push('" class="block full ');
     
-      __out.push(__sanitize(this.block.block_type));
+      __out.push(__sanitize(this.block.block_type.toLowerCase()));
     
       __out.push('" data-type="');
     
       __out.push(__sanitize(this.block.block_type));
     
-      __out.push('">\n  ');
+      __out.push('">\n\n  <!-- TYPE-SPECIFIC OUTPUT: -->\n  ');
     
       if (this.block.block_type === 'Media') {
         __out.push('\n    <!-- MEDIA -->\n    <div class="embed">\n      ');
@@ -653,7 +695,33 @@
         __out.push('\n    </div>\n  ');
       }
     
-      __out.push('\n</div><!-- #block -->');
+      __out.push('\n\n  <!-- UNIVERSAL OUTPUT: -->\n  <div class="metadata">\n    <h3 class="title">\n      <a href="/#/');
+    
+      __out.push(__sanitize(this.channel.slug));
+    
+      __out.push('/view:');
+    
+      __out.push(__sanitize(this.block.id));
+    
+      __out.push('">\n      ');
+    
+      if (this.block.title) {
+        __out.push('\n        ');
+        __out.push(__sanitize(this.block.title));
+        __out.push('\n      ');
+      } else {
+        __out.push('\n        Untitled\n      ');
+      }
+    
+      __out.push('\n      </a>\n    </h3>\n\n    ');
+    
+      if (!(this.block.block_type === 'Text' || !this.block.content)) {
+        __out.push('\n      <div class="description">\n        <div class="content">\n          ');
+        __out.push(this.block.content);
+        __out.push('\n        </div>\n      </div>\n    ');
+      }
+    
+      __out.push('\n  </div>\n  \n</div><!-- #block -->');
     
     }).call(this);
     
@@ -661,41 +729,5 @@
   __obj.safe = __objSafe, __obj.escape = __escape;
   return __out.join('');
 }
-  }
-}));
-(this.require.define({
-  "views/block_view": function(exports, require, module) {
-    (function() {
-  var template,
-    __hasProp = Object.prototype.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
-
-  template = require('./templates/single');
-
-  exports.BlockView = (function(_super) {
-
-    __extends(BlockView, _super);
-
-    function BlockView() {
-      BlockView.__super__.constructor.apply(this, arguments);
-    }
-
-    BlockView.prototype.render = function(id) {
-      $(this.el).html(template({
-        channel: this.options.channel.toJSON(),
-        block: this.model.toJSON(),
-        blocks: this.collection.toJSON(),
-        next: this.collection.next(this.model),
-        prev: this.collection.prev(this.model)
-      }));
-      return this;
-    };
-
-    return BlockView;
-
-  })(Backbone.View);
-
-}).call(this);
-
   }
 }));

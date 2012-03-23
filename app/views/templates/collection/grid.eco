@@ -1,5 +1,8 @@
-<div id="content">
-  <h1><%= @channel.title %></h1>
+<h1>
+  <%= @channel.title %>
+</h1>
+
+<div class="gallery">
   <% for block in @blocks: %>
     <% if block.image_thumb: %>
       <div class="thumb">

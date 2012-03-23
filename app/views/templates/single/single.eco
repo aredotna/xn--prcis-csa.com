@@ -1,14 +1,18 @@
-<nav>
-  <% if @prev: %>
-    <a href="/#/<%= @channel.slug %>/view:<%= @prev.id %>">Previous</a>
-  <% end %>
-  <a href="/#/<%= @channel.slug %>">Up</a>
-  <% if @next: %>
-    <a href="/#/<%= @channel.slug %>/view:<%= @next.id %>">Next</a>
-  <% end %>
-</nav>
+<% if @prev or @next: %>
+  <nav>
+    <% if @prev: %>
+      <a href="/#/<%= @channel.slug %>/view:<%= @prev.id %>">Previous</a>
+    <% end %>
+    <a href="/#/<%= @channel.slug %>">Up</a>
+    <% if @next: %>
+      <a href="/#/<%= @channel.slug %>/view:<%= @next.id %>">Next</a>
+    <% end %>
+  </nav>
+<% end %>
 
-<div id="block_<%= @block.id %>" class="block full <%= @block.block_type %>" data-type="<%= @block.block_type %>">
+<div id="block_<%= @block.id %>" class="block full <%= @block.block_type.toLowerCase() %>" data-type="<%= @block.block_type %>">
+
+  <!-- TYPE-SPECIFIC OUTPUT: -->
   <% if @block.block_type is 'Media': %>
     <!-- MEDIA -->
     <div class="embed">
@@ -42,4 +46,26 @@
       <%- @block.content %>
     </div>
   <% end %>
+
+  <!-- UNIVERSAL OUTPUT: -->
+  <div class="metadata">
+    <h3 class="title">
+      <a href="/#/<%= @channel.slug %>/view:<%= @block.id %>">
+      <% if @block.title: %>
+        <%= @block.title %>
+      <% else: %>
+        Untitled
+      <% end %>
+      </a>
+    </h3>
+
+    <% unless @block.block_type is 'Text' or !@block.content: %>
+      <div class="description">
+        <div class="content">
+          <%- @block.content %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  
 </div><!-- #block -->
