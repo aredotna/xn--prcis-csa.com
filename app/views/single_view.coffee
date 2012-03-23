@@ -18,5 +18,4 @@ class exports.SingleView extends Backbone.View
       blocks  : @collection.toJSON()
       next    : @collection.next(@model)
       prev    : @collection.prev(@model)
-
     this
