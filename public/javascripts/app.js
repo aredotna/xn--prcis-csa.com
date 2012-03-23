@@ -48,6 +48,88 @@
     };
   }
 }).call(this);(this.require.define({
+  "models/channel": function(exports, require, module) {
+    (function() {
+  var Blocks,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  Blocks = require('collections/blocks').Blocks;
+
+  exports.Channel = (function(_super) {
+
+    __extends(Channel, _super);
+
+    function Channel() {
+      Channel.__super__.constructor.apply(this, arguments);
+    }
+
+    Channel.prototype.url = function() {
+      return "http://are.na/api/v1/channels/" + (this.get('slug')) + ".json?callback=?";
+    };
+
+    Channel.prototype.maybeLoad = function(slug) {
+      var _this = this;
+      if (slug === this.get('slug')) {
+        return true;
+      } else {
+        this.clear();
+        app.loading().start();
+        this.set('slug', slug);
+        this.set('fetching', true);
+        return this.fetch({
+          success: function() {
+            _this.setupBlocks();
+            _this.set('fetching', false);
+            app.loading().stop();
+            return true;
+          },
+          error: function(error) {
+            return console.log("Error: " + error);
+          }
+        });
+      }
+    };
+
+    Channel.prototype.setupBlocks = function() {
+      return this.blocks = new Blocks(this.get('blocks'));
+    };
+
+    return Channel;
+
+  })(Backbone.Model);
+
+}).call(this);
+
+  }
+}));
+(this.require.define({
+  "helpers": function(exports, require, module) {
+    (function() {
+
+  exports.BrunchApplication = (function() {
+
+    function BrunchApplication() {
+      var _this = this;
+      $(function() {
+        _this.initialize(_this);
+        return Backbone.history.start();
+      });
+    }
+
+    BrunchApplication.prototype.initialize = function() {
+      return null;
+    };
+
+    return BrunchApplication;
+
+  })();
+
+}).call(this);
+
+  }
+}));
+(this.require.define({
   "routers/main_router": function(exports, require, module) {
     (function() {
   var Channel, CollectionView, SingleView,
@@ -113,32 +195,6 @@
   }
 }));
 (this.require.define({
-  "helpers": function(exports, require, module) {
-    (function() {
-
-  exports.BrunchApplication = (function() {
-
-    function BrunchApplication() {
-      var _this = this;
-      $(function() {
-        _this.initialize(_this);
-        return Backbone.history.start();
-      });
-    }
-
-    BrunchApplication.prototype.initialize = function() {
-      return null;
-    };
-
-    return BrunchApplication;
-
-  })();
-
-}).call(this);
-
-  }
-}));
-(this.require.define({
   "collections/blocks": function(exports, require, module) {
     (function() {
   var Block,
@@ -194,62 +250,6 @@
     }
 
     return Block;
-
-  })(Backbone.Model);
-
-}).call(this);
-
-  }
-}));
-(this.require.define({
-  "models/channel": function(exports, require, module) {
-    (function() {
-  var Blocks,
-    __hasProp = Object.prototype.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
-
-  Blocks = require('collections/blocks').Blocks;
-
-  exports.Channel = (function(_super) {
-
-    __extends(Channel, _super);
-
-    function Channel() {
-      Channel.__super__.constructor.apply(this, arguments);
-    }
-
-    Channel.prototype.url = function() {
-      return "http://are.na/api/v1/channels/" + (this.get('slug')) + ".json?callback=?";
-    };
-
-    Channel.prototype.maybeLoad = function(slug) {
-      var _this = this;
-      if (slug === this.get('slug')) {
-        return true;
-      } else {
-        this.clear();
-        app.loading().start();
-        this.set('slug', slug);
-        this.set('fetching', true);
-        return this.fetch({
-          success: function() {
-            _this.setupBlocks();
-            _this.set('fetching', false);
-            app.loading().stop();
-            return true;
-          },
-          error: function(error) {
-            return console.log("Error: " + error);
-          }
-        });
-      }
-    };
-
-    Channel.prototype.setupBlocks = function() {
-      return this.blocks = new Blocks(this.get('blocks'));
-    };
-
-    return Channel;
 
   })(Backbone.Model);
 
@@ -364,8 +364,11 @@
 (this.require.define({
   "views/single_view": function(exports, require, module) {
     (function() {
-  var __hasProp = Object.prototype.hasOwnProperty,
+  var template,
+    __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  template = require("./templates/single");
 
   exports.SingleView = (function(_super) {
 
@@ -378,12 +381,11 @@
     SingleView.prototype.id = 'single';
 
     SingleView.prototype.initialize = function() {
-      document.title = this.model.get('title') ? "" + (this.options.channel.get('title')) + ": " + (this.model.get('title')) : this.options.channel.get('title');
-      return this.template = require("./templates/single");
+      return document.title = this.model.get('title') ? "" + (this.options.channel.get('title')) + ": " + (this.model.get('title')) : this.options.channel.get('title');
     };
 
     SingleView.prototype.render = function(id) {
-      $(this.el).html(this.template({
+      $(this.el).html(template({
         channel: this.options.channel.toJSON(),
         block: this.model.toJSON(),
         blocks: this.collection.toJSON(),
@@ -586,7 +588,11 @@
         __out.push('">Previous</a>\n  ');
       }
     
-      __out.push('\n  \n  ');
+      __out.push('\n  <a href="/#/');
+    
+      __out.push(__sanitize(this.channel.slug));
+    
+      __out.push('">Up</a>\n  ');
     
       if (this.next) {
         __out.push('\n    <a href="/#/');

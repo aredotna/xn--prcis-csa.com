@@ -2,7 +2,7 @@
   <% if @prev: %>
     <a href="/#/<%= @channel.slug %>/view:<%= @prev.id %>">Previous</a>
   <% end %>
-  
+  <a href="/#/<%= @channel.slug %>">Up</a>
   <% if @next: %>
     <a href="/#/<%= @channel.slug %>/view:<%= @next.id %>">Next</a>
   <% end %>
