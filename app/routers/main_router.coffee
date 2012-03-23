@@ -1,4 +1,5 @@
 {Channel}        = require 'models/channel'
+{BlockView}      = require 'views/block_view'
 {SingleView}     = require 'views/single_view'
 {CollectionView} = require 'views/collection_view'
 

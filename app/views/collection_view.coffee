@@ -1,6 +1,4 @@
-{SingleView}     = require 'views/single_view'
-{SingleTemplate} = require './templates/single'
-
+{BlockView}     = require 'views/block_view'
 
 class exports.CollectionView extends Backbone.View
   id: 'collection'
@@ -16,7 +14,7 @@ class exports.CollectionView extends Backbone.View
     @collection.each @addOne
     
   addOne: (block) =>
-    view = new SingleView
+    view = new BlockView
       model       : block
       collection  : @model.blocks
       channel     : @model
