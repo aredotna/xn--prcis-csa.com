@@ -1,5 +1,2 @@
-<h1>
-  <%= @channel.title %>
-</h1>
-
 <div id="blocks" class="grid"></div>
+<h1><%= @channel.title %></h1>

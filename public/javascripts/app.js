@@ -102,6 +102,17 @@
       return null;
     };
 
+    BrunchApplication.prototype.loading = function() {
+      return {
+        start: function() {
+          return $('body').addClass('loading');
+        },
+        stop: function() {
+          return $('body').removeClass('loading');
+        }
+      };
+    };
+
     return BrunchApplication;
 
   })();
@@ -129,6 +140,10 @@
 
     Blocks.prototype.model = Block;
 
+    Blocks.prototype.comparator = function(block) {
+      return block.get('channel_connection').position;
+    };
+
     Blocks.prototype.next = function(model) {
       var i;
       i = this.at(this.indexOf(model));
@@ -154,7 +169,8 @@
 (this.require.define({
   "models/block": function(exports, require, module) {
     (function() {
-  var __hasProp = Object.prototype.hasOwnProperty,
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   exports.Block = (function(_super) {
@@ -162,8 +178,29 @@
     __extends(Block, _super);
 
     function Block() {
+      this.channelConnection = __bind(this.channelConnection, this);
       Block.__super__.constructor.apply(this, arguments);
     }
+
+    Block.prototype.initialize = function() {
+      this.checkIfMissingImage();
+      return this.channelConnection();
+    };
+
+    Block.prototype.checkIfMissingImage = function() {
+      var missing;
+      missing = '/assets/interface/missing.png';
+      if (this.get('image_thumb') === missing) {
+        return this.set('image_thumb', null);
+      }
+    };
+
+    Block.prototype.channelConnection = function() {
+      var _this = this;
+      return this.set('channel_connection', _.find(this.get('connections'), function(connection) {
+        return connection.channel_id === app.router.channel.id;
+      }));
+    };
 
     return Block;
 
@@ -236,13 +273,13 @@
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-  Channel = require('models/channel').Channel;
-
   BlockView = require('views/block_view').BlockView;
 
   SingleView = require('views/single_view').SingleView;
 
   CollectionView = require('views/collection_view').CollectionView;
+
+  Channel = require('models/channel').Channel;
 
   exports.MainRouter = (function(_super) {
 
@@ -303,13 +340,15 @@
 (this.require.define({
   "initialize": function(exports, require, module) {
     (function() {
-  var BrunchApplication, MainRouter,
+  var BrunchApplication, Channel, MainRouter,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   BrunchApplication = require('helpers').BrunchApplication;
 
   MainRouter = require('routers/main_router').MainRouter;
+
+  Channel = require('models/channel').Channel;
 
   exports.Application = (function(_super) {
 
@@ -322,17 +361,6 @@
     Application.prototype.initialize = function() {
       this.loading().start();
       return this.router = new MainRouter;
-    };
-
-    Application.prototype.loading = function() {
-      return {
-        start: function() {
-          return $('body').addClass('loading');
-        },
-        stop: function() {
-          return $('body').removeClass('loading');
-        }
-      };
     };
 
     return Application;
@@ -491,11 +519,11 @@
   (function() {
     (function() {
     
-      __out.push('<h1>\n  ');
+      __out.push('<div id="blocks" class="grid"></div>\n<h1>');
     
       __out.push(__sanitize(this.channel.title));
     
-      __out.push('\n</h1>\n\n<div id="blocks" class="grid"></div>');
+      __out.push('</h1>');
     
     }).call(this);
     
@@ -547,11 +575,11 @@
   (function() {
     (function() {
     
-      __out.push('<div id="content">\n  <h1>');
+      __out.push('<div id="blocks" class="list"></div>\n<h1>');
     
       __out.push(__sanitize(this.channel.title));
     
-      __out.push('</h1>\n  <div id="blocks" class="list"></div>\n</div>');
+      __out.push('</h1>');
     
     }).call(this);
     
@@ -620,15 +648,15 @@
         __out.push(__sanitize(this.channel.slug));
         __out.push('/view:');
         __out.push(__sanitize(this.block.id));
-        __out.push('">');
+        __out.push('">\n      ');
         __out.push(__sanitize(this.block.title));
-        __out.push('</a>\n  ');
+        __out.push('\n    </a>\n  ');
       } else {
         __out.push('\n    <a href="/#/');
         __out.push(__sanitize(this.channel.slug));
         __out.push('/view:');
         __out.push(__sanitize(this.block.id));
-        __out.push('">Untitled</a>\n  ');
+        __out.push('">\n      Untitled\n    </a>\n  ');
       }
     
       __out.push('\n</div>');

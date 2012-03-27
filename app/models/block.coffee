@@ -1,8 +1,15 @@
 class exports.Block extends Backbone.Model
-  # initialize: ->
-  #   @channel = exports.Channel
+  initialize: ->
+    @checkIfMissingImage()
+    @channelConnection()
+    
+  checkIfMissingImage: ->
+    # Check if the image actually is missing
+    # Will have to fix this in the actual API response
+    missing = '/assets/interface/missing.png'
+    @set('image_thumb', null) if @get('image_thumb') is missing
 
-  # channelConnection: () => 
-  #   _.find(@get('connections'), (connection) =>
-  #     connection.channel_id is @channel.id
-  #   )
+  channelConnection: =>
+    @set('channel_connection', _.find(@get('connections'), (connection) =>
+      connection.channel_id is app.router.channel.id)
+    )

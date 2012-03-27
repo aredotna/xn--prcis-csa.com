@@ -6,8 +6,12 @@
       </a>
     </div>
   <% else if @block.title: %>
-    <a href="/#/<%= @channel.slug %>/view:<%= @block.id %>"><%= @block.title %></a>
+    <a href="/#/<%= @channel.slug %>/view:<%= @block.id %>">
+      <%= @block.title %>
+    </a>
   <% else: %>
-    <a href="/#/<%= @channel.slug %>/view:<%= @block.id %>">Untitled</a>
+    <a href="/#/<%= @channel.slug %>/view:<%= @block.id %>">
+      Untitled
+    </a>
   <% end %>
 </div>

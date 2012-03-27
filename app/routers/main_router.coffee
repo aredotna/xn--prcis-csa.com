@@ -1,7 +1,7 @@
-{Channel}        = require 'models/channel'
 {BlockView}      = require 'views/block_view'
 {SingleView}     = require 'views/single_view'
 {CollectionView} = require 'views/collection_view'
+{Channel}        = require 'models/channel'
 
 class exports.MainRouter extends Backbone.Router
   routes:
@@ -12,7 +12,6 @@ class exports.MainRouter extends Backbone.Router
 
   initialize: ->
     @channel = new Channel()
-
 
   collection: (slug, mode = 'grid') ->
     @channel.set {'mode', mode}
