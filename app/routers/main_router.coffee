@@ -14,6 +14,7 @@ class exports.MainRouter extends Backbone.Router
     @channel = new Channel()
 
   collection: (slug, mode = 'grid') ->
+    # Save the current view mode in the channel
     @channel.set {'mode', mode}
 
     $.when(@channel.maybeLoad slug).then =>
