@@ -293,7 +293,7 @@
       '': 'collection',
       '/:slug': 'collection',
       '/:slug/mode::mode': 'collection',
-      '/:slug/view::id': 'single'
+      '/:slug/show::id': 'single'
     };
 
     MainRouter.prototype.initialize = function() {
@@ -634,7 +634,7 @@
       if (this.block.image_thumb) {
         __out.push('\n    <div class="image">\n      <a href="/#/');
         __out.push(__sanitize(this.channel.slug));
-        __out.push('/view:');
+        __out.push('/show:');
         __out.push(__sanitize(this.block.id));
         __out.push('">\n        <img src="');
         __out.push(__sanitize(this.block.image_thumb));
@@ -644,7 +644,7 @@
       } else if (this.block.title) {
         __out.push('\n    <a href="/#/');
         __out.push(__sanitize(this.channel.slug));
-        __out.push('/view:');
+        __out.push('/show:');
         __out.push(__sanitize(this.block.id));
         __out.push('">\n      ');
         __out.push(__sanitize(this.block.title));
@@ -652,7 +652,7 @@
       } else {
         __out.push('\n    <a href="/#/');
         __out.push(__sanitize(this.channel.slug));
-        __out.push('/view:');
+        __out.push('/show:');
         __out.push(__sanitize(this.block.id));
         __out.push('">\n      Untitled\n    </a>\n  ');
       }
@@ -714,7 +714,7 @@
         if (this.prev) {
           __out.push('\n      <a href="/#/');
           __out.push(__sanitize(this.channel.slug));
-          __out.push('/view:');
+          __out.push('/show:');
           __out.push(__sanitize(this.prev.id));
           __out.push('">Previous</a>\n    ');
         }
@@ -734,7 +734,7 @@
         if (this.next) {
           __out.push('\n      <a href="/#/');
           __out.push(__sanitize(this.channel.slug));
-          __out.push('/view:');
+          __out.push('/show:');
           __out.push(__sanitize(this.next.id));
           __out.push('">Next</a>\n    ');
         }
@@ -805,7 +805,7 @@
     
       __out.push(__sanitize(this.channel.slug));
     
-      __out.push('/view:');
+      __out.push('/show:');
     
       __out.push(__sanitize(this.block.id));
     

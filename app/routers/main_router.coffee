@@ -8,7 +8,7 @@ class exports.MainRouter extends Backbone.Router
     ''                  : 'collection'
     '/:slug'            : 'collection'
     '/:slug/mode::mode' : 'collection'
-    '/:slug/view::id'   : 'single'
+    '/:slug/show::id'   : 'single'
 
   initialize: ->
     @channel = new Channel()
