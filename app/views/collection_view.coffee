@@ -23,7 +23,7 @@ class exports.CollectionView extends Backbone.View
     @$('#blocks').append view.render().el
 
   render: ->
-    $(@el).html @template
+    @$el.html @template
       channel : @model.toJSON()
       blocks  : @collection.toJSON()
 

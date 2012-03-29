@@ -14,7 +14,7 @@ class exports.SingleView extends BlockView
         @options.channel.get 'title'
 
   render: (id) ->
-    $(@el).html template
+    @$el.html template
       channel : @options.channel.toJSON()
       block   : @model.toJSON()
       blocks  : @collection.toJSON()

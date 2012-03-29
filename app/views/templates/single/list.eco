@@ -30,7 +30,7 @@
     </div>
   <% else if @block.block_type is 'Image': %>
     <!-- IMAGE -->
-    <a href="<%= @block.image_original %>">
+    <a href="<%= @block.image_original %>" class="enlarge">
       <img src="<%= @block.image_display %>" alt="<%= @block.title %>" />
     </a>
   <% else if @block.block_type is 'Link': %>

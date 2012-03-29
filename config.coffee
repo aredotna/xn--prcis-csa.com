@@ -42,7 +42,7 @@ exports.config =
   # framework: 'backbone'
 
   # Enable or disable minifying of result js / css files.
-  minify: no
+  minify: yes
 
   # Settings of web server that will run with `brunch watch [--server]`.
   # server:
