@@ -48,56 +48,35 @@
     };
   }
 }).call(this);(this.require.define({
-  "views/collection_view": function(exports, require, module) {
+  "views/block_view": function(exports, require, module) {
     (function() {
-  var BlockView,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    __hasProp = Object.prototype.hasOwnProperty,
+  var __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-  BlockView = require('views/block_view').BlockView;
+  exports.BlockView = (function(_super) {
 
-  exports.CollectionView = (function(_super) {
+    __extends(BlockView, _super);
 
-    __extends(CollectionView, _super);
-
-    function CollectionView() {
-      this.addOne = __bind(this.addOne, this);
-      CollectionView.__super__.constructor.apply(this, arguments);
+    function BlockView() {
+      BlockView.__super__.constructor.apply(this, arguments);
     }
 
-    CollectionView.prototype.id = 'collection';
+    BlockView.prototype.className = 'block';
 
-    CollectionView.prototype.initialize = function() {
-      document.title = this.model.get('title');
-      return this.template = require("./templates/collection/" + this.options.mode);
+    BlockView.prototype.initialize = function() {
+      return this.template = require("./templates/single/" + this.options.mode);
     };
 
-    CollectionView.prototype.addAll = function() {
-      return this.collection.each(this.addOne);
-    };
-
-    CollectionView.prototype.addOne = function(block) {
-      var view;
-      view = new BlockView({
-        mode: this.options.mode,
-        model: block,
-        collection: this.model.blocks,
-        channel: this.model
-      });
-      return this.$('#blocks').append(view.render().el);
-    };
-
-    CollectionView.prototype.render = function() {
+    BlockView.prototype.render = function() {
       this.$el.html(this.template({
-        channel: this.model.toJSON(),
-        blocks: this.collection.toJSON()
+        mode: this.options.mode,
+        channel: this.options.channel.toJSON(),
+        block: this.model.toJSON()
       }));
-      this.addAll();
       return this;
     };
 
-    return CollectionView;
+    return BlockView;
 
   })(Backbone.View);
 
@@ -359,60 +338,6 @@
   }
 }));
 (this.require.define({
-  "views/block_view": function(exports, require, module) {
-    (function() {
-  var LightboxView,
-    __hasProp = Object.prototype.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
-
-  LightboxView = require('views/lightbox_view').LightboxView;
-
-  exports.BlockView = (function(_super) {
-
-    __extends(BlockView, _super);
-
-    function BlockView() {
-      BlockView.__super__.constructor.apply(this, arguments);
-    }
-
-    BlockView.prototype.className = 'block';
-
-    BlockView.prototype.events = {
-      'click .enlarge': 'enlarge'
-    };
-
-    BlockView.prototype.initialize = function() {
-      return this.template = require("./templates/single/" + this.options.mode);
-    };
-
-    BlockView.prototype.enlarge = function(e) {
-      e.preventDefault();
-      this.view = new LightboxView({
-        model: this.model,
-        channel: this.options.channel,
-        mode: this.options.mode
-      });
-      return $('#modal').html(this.view.render().el);
-    };
-
-    BlockView.prototype.render = function() {
-      this.$el.html(this.template({
-        mode: this.options.mode,
-        channel: this.options.channel.toJSON(),
-        block: this.model.toJSON()
-      }));
-      return this;
-    };
-
-    return BlockView;
-
-  })(Backbone.View);
-
-}).call(this);
-
-  }
-}));
-(this.require.define({
   "initialize": function(exports, require, module) {
     (function() {
   var BrunchApplication, MainRouter,
@@ -447,42 +372,56 @@
   }
 }));
 (this.require.define({
-  "views/lightbox_view": function(exports, require, module) {
+  "views/collection_view": function(exports, require, module) {
     (function() {
-  var template,
+  var BlockView,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-  template = require('./templates/single/lightbox');
+  BlockView = require('views/block_view').BlockView;
 
-  exports.LightboxView = (function(_super) {
+  exports.CollectionView = (function(_super) {
 
-    __extends(LightboxView, _super);
+    __extends(CollectionView, _super);
 
-    function LightboxView() {
-      LightboxView.__super__.constructor.apply(this, arguments);
+    function CollectionView() {
+      this.addOne = __bind(this.addOne, this);
+      CollectionView.__super__.constructor.apply(this, arguments);
     }
 
-    LightboxView.prototype.className = 'lightbox';
+    CollectionView.prototype.id = 'collection';
 
-    LightboxView.prototype.events = {
-      'click *': 'remove'
+    CollectionView.prototype.initialize = function() {
+      document.title = this.model.get('title');
+      return this.template = require("./templates/collection/" + this.options.mode);
     };
 
-    LightboxView.prototype.initialize = function() {
-      console.log(this.$el);
-      return this.$el.removeClass('hide');
+    CollectionView.prototype.addAll = function() {
+      return this.collection.each(this.addOne);
     };
 
-    LightboxView.prototype.render = function() {
-      this.$el.html(template({
-        channel: this.options.channel.toJSON(),
-        block: this.model.toJSON()
+    CollectionView.prototype.addOne = function(block) {
+      var view;
+      view = new BlockView({
+        mode: this.options.mode,
+        model: block,
+        collection: this.model.blocks,
+        channel: this.model
+      });
+      return this.$('#blocks').append(view.render().el);
+    };
+
+    CollectionView.prototype.render = function() {
+      this.$el.html(this.template({
+        channel: this.model.toJSON(),
+        blocks: this.collection.toJSON()
       }));
+      this.addAll();
       return this;
     };
 
-    return LightboxView;
+    return CollectionView;
 
   })(Backbone.View);
 
@@ -719,58 +658,6 @@
       }
     
       __out.push('\n</div>');
-    
-    }).call(this);
-    
-  }).call(__obj);
-  __obj.safe = __objSafe, __obj.escape = __escape;
-  return __out.join('');
-}
-  }
-}));
-(this.require.define({
-  "views/templates/single/lightbox": function(exports, require, module) {
-    module.exports = function (__obj) {
-  if (!__obj) __obj = {};
-  var __out = [], __capture = function(callback) {
-    var out = __out, result;
-    __out = [];
-    callback.call(this);
-    result = __out.join('');
-    __out = out;
-    return __safe(result);
-  }, __sanitize = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else if (typeof value !== 'undefined' && value != null) {
-      return __escape(value);
-    } else {
-      return '';
-    }
-  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
-  __safe = __obj.safe = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else {
-      if (!(typeof value !== 'undefined' && value != null)) value = '';
-      var result = new String(value);
-      result.ecoSafe = true;
-      return result;
-    }
-  };
-  if (!__escape) {
-    __escape = __obj.escape = function(value) {
-      return ('' + value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    };
-  }
-  (function() {
-    (function() {
-    
-      __out.push('Hello world');
     
     }).call(this);
     
