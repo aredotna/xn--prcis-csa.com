@@ -14,6 +14,7 @@ class exports.CollectionView extends Backbone.View
     @collection.each @addOne
     
   addOne: (block) =>
+
     view = new BlockView
       mode        : @options.mode
       model       : block

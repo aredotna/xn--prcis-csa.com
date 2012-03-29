@@ -1,1 +1,986 @@
-((function(){if(!this.require){var a={},b={},c=function(f,g){var h=b[f],i=d(g,f),j;if(h)return h;if(!(j=a[i]||a[i=d(i,"./index")]))throw"module '"+f+"' not found";h={id:f,exports:{}};try{return b[f]=h.exports,j(h.exports,function(a){return c(a,e(i))},h),b[f]=h.exports}catch(k){throw delete b[f],k}},d=function(a,b){var c=[],d,e;/^\.\.?(\/|$)/.test(b)?d=[a,b].join("/").split("/"):d=b.split("/");for(var f=0,g=d.length;f<g;f++)e=d[f],e==".."?c.pop():e!="."&&e!=""&&c.push(e);return c.join("/")},e=function(a){return a.split("/").slice(0,-1).join("/")};this.require=function(a){return c(a,"")},this.require.brunch=!0,this.require.define=function(b){for(var c in b)a[c]=b[c]}}})).call(this),this.require.define({"views/collection_view":function(a,b,c){((function(){var c,d=function(a,b){return function(){return a.apply(b,arguments)}},e=Object.prototype.hasOwnProperty,f=function(a,b){function d(){this.constructor=a}for(var c in b)e.call(b,c)&&(a[c]=b[c]);return d.prototype=b.prototype,a.prototype=new d,a.__super__=b.prototype,a};c=b("views/block_view").BlockView,a.CollectionView=function(a){function e(){this.addOne=d(this.addOne,this),e.__super__.constructor.apply(this,arguments)}return f(e,a),e.prototype.id="collection",e.prototype.initialize=function(){return document.title=this.model.get("title"),this.template=b("./templates/collection/"+this.options.mode)},e.prototype.addAll=function(){return this.collection.each(this.addOne)},e.prototype.addOne=function(a){var b;return b=new c({mode:this.options.mode,model:a,collection:this.model.blocks,channel:this.model}),this.$("#blocks").append(b.render().el)},e.prototype.render=function(){return this.$el.html(this.template({channel:this.model.toJSON(),blocks:this.collection.toJSON()})),this.addAll(),this},e}(Backbone.View)})).call(this)}}),this.require.define({helpers:function(a,b,c){((function(){a.BrunchApplication=function(){function a(){var a=this;$(function(){return a.initialize(a),Backbone.history.start()})}return a.prototype.initialize=function(){return null},a.prototype.loading=function(){return{start:function(){return $("body").addClass("loading")},stop:function(){return $("body").removeClass("loading")}}},a}()})).call(this)}}),this.require.define({"collections/blocks":function(a,b,c){((function(){var c,d=Object.prototype.hasOwnProperty,e=function(a,b){function e(){this.constructor=a}for(var c in b)d.call(b,c)&&(a[c]=b[c]);return e.prototype=b.prototype,a.prototype=new e,a.__super__=b.prototype,a};c=b("models/block").Block,a.Blocks=function(a){function b(){b.__super__.constructor.apply(this,arguments)}return e(b,a),b.prototype.model=c,b.prototype.comparator=function(a){return a.get("channel_connection").position},b.prototype.next=function(a){var b;return b=this.at(this.indexOf(a)),undefined===b||b<0?!1:this.at(this.indexOf(a)+1)},b.prototype.prev=function(a){var b;return b=this.at(this.indexOf(a)),undefined===b||b<1?!1:this.at(this.indexOf(a)-1)},b}(Backbone.Collection)})).call(this)}}),this.require.define({"models/block":function(a,b,c){((function(){var b=function(a,b){return function(){return a.apply(b,arguments)}},c=Object.prototype.hasOwnProperty,d=function(a,b){function e(){this.constructor=a}for(var d in b)c.call(b,d)&&(a[d]=b[d]);return e.prototype=b.prototype,a.prototype=new e,a.__super__=b.prototype,a};a.Block=function(a){function c(){this.channelConnection=b(this.channelConnection,this),c.__super__.constructor.apply(this,arguments)}return d(c,a),c.prototype.initialize=function(){return this.checkIfMissingImage(),this.channelConnection()},c.prototype.checkIfMissingImage=function(){var a;a="/assets/interface/missing.png";if(this.get("image_thumb")===a)return this.set("image_thumb",null)},c.prototype.channelConnection=function(){var a=this;return this.set("channel_connection",_.find(this.get("connections"),function(a){return a.channel_id===app.router.channel.id}))},c}(Backbone.Model)})).call(this)}}),this.require.define({"models/channel":function(a,b,c){((function(){var c,d=Object.prototype.hasOwnProperty,e=function(a,b){function e(){this.constructor=a}for(var c in b)d.call(b,c)&&(a[c]=b[c]);return e.prototype=b.prototype,a.prototype=new e,a.__super__=b.prototype,a};c=b("collections/blocks").Blocks,a.Channel=function(a){function b(){b.__super__.constructor.apply(this,arguments)}return e(b,a),b.prototype.url=function(){return"http://are.na/api/v1/channels/"+this.get("slug")+".json?callback=?"},b.prototype.maybeLoad=function(a){var b=this;return a===this.get("slug")?!0:(this.clear(),app.loading().start(),this.set("slug",a),this.set("fetching",!0),this.fetch({success:function(){return b.setupBlocks(),b.set("fetching",!1),app.loading().stop(),!0},error:function(a){return console.log("Error: "+a)}}))},b.prototype.setupBlocks=function(){return this.blocks=new c(this.get("blocks"))},b}(Backbone.Model)})).call(this)}}),this.require.define({"routers/main_router":function(a,b,c){((function(){var c,d,e,f,g=Object.prototype.hasOwnProperty,h=function(a,b){function d(){this.constructor=a}for(var c in b)g.call(b,c)&&(a[c]=b[c]);return d.prototype=b.prototype,a.prototype=new d,a.__super__=b.prototype,a};c=b("views/block_view").BlockView,f=b("views/single_view").SingleView,e=b("views/collection_view").CollectionView,d=b("models/channel").Channel,a.MainRouter=function(a){function b(){b.__super__.constructor.apply(this,arguments)}return h(b,a),b.prototype.routes={"":"collection","/:slug":"collection","/:slug/mode::mode":"collection","/:slug/show::id":"single"},b.prototype.initialize=function(){return this.channel=new d},b.prototype.collection=function(a,b){var c=this;return b==null&&(b="grid"),this.channel.set({mode:"mode",mode:b}),$.when(this.channel.maybeLoad(a)).then(function(){return c.collectionView=new e({model:c.channel,collection:c.channel.blocks,mode:b}),$("body").attr("class","collection").html(c.collectionView.render().el)})},b.prototype.single=function(a,b){var c=this;return $.when(this.channel.maybeLoad(a)).then(function(){return c.singleView=new f({model:c.channel.blocks.get(b),collection:c.channel.blocks,channel:c.channel}),$("body").attr("class","single").html(c.singleView.render().el)})},b}(Backbone.Router)})).call(this)}}),this.require.define({"views/block_view":function(a,b,c){((function(){var c,d=Object.prototype.hasOwnProperty,e=function(a,b){function e(){this.constructor=a}for(var c in b)d.call(b,c)&&(a[c]=b[c]);return e.prototype=b.prototype,a.prototype=new e,a.__super__=b.prototype,a};c=b("views/lightbox_view").LightboxView,a.BlockView=function(a){function d(){d.__super__.constructor.apply(this,arguments)}return e(d,a),d.prototype.className="block",d.prototype.events={"click .enlarge":"enlarge"},d.prototype.initialize=function(){return this.template=b("./templates/single/"+this.options.mode)},d.prototype.enlarge=function(a){return a.preventDefault(),this.view=new c({model:this.model,channel:this.options.channel,mode:this.options.mode}),$("#modal").html(this.view.render().el)},d.prototype.render=function(){return this.$el.html(this.template({mode:this.options.mode,channel:this.options.channel.toJSON(),block:this.model.toJSON()})),this},d}(Backbone.View)})).call(this)}}),this.require.define({initialize:function(a,b,c){((function(){var c,d,e=Object.prototype.hasOwnProperty,f=function(a,b){function d(){this.constructor=a}for(var c in b)e.call(b,c)&&(a[c]=b[c]);return d.prototype=b.prototype,a.prototype=new d,a.__super__=b.prototype,a};c=b("helpers").BrunchApplication,d=b("routers/main_router").MainRouter,a.Application=function(a){function b(){b.__super__.constructor.apply(this,arguments)}return f(b,a),b.prototype.initialize=function(){return this.loading().start(),this.router=new d},b}(c),window.app=new a.Application})).call(this)}}),this.require.define({"views/lightbox_view":function(a,b,c){((function(){var c,d=Object.prototype.hasOwnProperty,e=function(a,b){function e(){this.constructor=a}for(var c in b)d.call(b,c)&&(a[c]=b[c]);return e.prototype=b.prototype,a.prototype=new e,a.__super__=b.prototype,a};c=b("./templates/single/lightbox"),a.LightboxView=function(a){function b(){b.__super__.constructor.apply(this,arguments)}return e(b,a),b.prototype.className="lightbox",b.prototype.events={"click *":"remove"},b.prototype.initialize=function(){return console.log(this.$el),this.$el.removeClass("hide")},b.prototype.render=function(){return this.$el.html(c({channel:this.options.channel.toJSON(),block:this.model.toJSON()})),this},b}(Backbone.View)})).call(this)}}),this.require.define({"views/single_view":function(a,b,c){((function(){var c,d,e=Object.prototype.hasOwnProperty,f=function(a,b){function d(){this.constructor=a}for(var c in b)e.call(b,c)&&(a[c]=b[c]);return d.prototype=b.prototype,a.prototype=new d,a.__super__=b.prototype,a};d=b("./templates/single/list"),c=b("views/block_view").BlockView,a.SingleView=function(a){function b(){b.__super__.constructor.apply(this,arguments)}return f(b,a),b.prototype.id="single",b.prototype.className="block",b.prototype.initialize=function(){return document.title=this.model.get("title")?""+this.options.channel.get("title")+": "+this.model.get("title"):this.options.channel.get("title")},b.prototype.render=function(a){return this.$el.html(d({channel:this.options.channel.toJSON(),block:this.model.toJSON(),blocks:this.collection.toJSON(),next:this.collection.next(this.model),prev:this.collection.prev(this.model)})),this},b}(c)})).call(this)}}),this.require.define({"views/templates/collection/grid":function(a,b,c){c.exports=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<div id="modal" class="hide"></div>\n<div id="blocks" class="grid"></div>\n<h1>'),b.push(d(this.channel.title)),b.push("</h1>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}}}),this.require.define({"views/templates/collection/list":function(a,b,c){c.exports=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<div id="modal" class="hide"></div>\n<div id="blocks" class="list"></div>\n<h1>'),b.push(d(this.channel.title)),b.push("</h1>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}}}),this.require.define({"views/templates/single/grid":function(a,b,c){c.exports=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<div class="thumb">\n  '),this.block.image_thumb?(b.push('\n    <div class="image">\n      <a href="/#/'),b.push(d(this.channel.slug)),b.push("/show:"),b.push(d(this.block.id)),b.push('">\n        <img src="'),b.push(d(this.block.image_thumb)),b.push('" alt="'),b.push(d(this.block.title)),b.push('" />\n      </a>\n    </div>\n  ')):this.block.title?(b.push('\n    <a href="/#/'),b.push(d(this.channel.slug)),b.push("/show:"),b.push(d(this.block.id)),b.push('">\n      '),b.push(d(this.block.title)),b.push("\n    </a>\n  ")):(b.push('\n    <a href="/#/'),b.push(d(this.channel.slug)),b.push("/show:"),b.push(d(this.block.id)),b.push('">\n      Untitled\n    </a>\n  ')),b.push("\n</div>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}}}),this.require.define({"views/templates/single/lightbox":function(a,b,c){c.exports=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push("HELL")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}}}),this.require.define({"views/templates/single/list":function(a,b,c){c.exports=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){if(this.prev||this.next)b.push("\n  <nav>\n    "),this.prev&&(b.push('\n      <a href="/#/'),b.push(d(this.channel.slug)),b.push("/show:"),b.push(d(this.prev.id)),b.push('">Previous</a>\n    ')),b.push("\n    "),this.channel.mode?(b.push('\n      <a href="/#/'),b.push(d(this.channel.slug)),b.push("/mode:"),b.push(d(this.channel.mode)),b.push('">Up</a>\n    ')):(b.push('\n      <a href="/#/'),b.push(d(this.channel.slug)),b.push('">Up</a>\n    ')),b.push("\n    "),this.next&&(b.push('\n      <a href="/#/'),b.push(d(this.channel.slug)),b.push("/show:"),b.push(d(this.next.id)),b.push('">Next</a>\n    ')),b.push("\n  </nav>\n");b.push('\n\n<div id="block_'),b.push(d(this.block.id)),b.push('" class="full '),b.push(d(this.block.block_type.toLowerCase())),b.push('" data-type="'),b.push(d(this.block.block_type)),b.push('">\n\n  <!-- TYPE-SPECIFIC OUTPUT: -->\n  '),this.block.block_type==="Media"?(b.push('\n    <!-- MEDIA -->\n    <div class="embed">\n      '),this.block.embed_html?(b.push("\n        "),b.push(this.block.embed_html),b.push("\n      ")):(b.push('\n        <a href="'),b.push(d(this.block.embed_source_url)),b.push('" class="url external">\n          '),b.push(d(this.block.embed_source_url)),b.push("\n        </a>\n      ")),b.push("\n    </div>\n  ")):this.block.block_type==="Image"?(b.push('\n    <!-- IMAGE -->\n    <a href="'),b.push(d(this.block.image_original)),b.push('" class="enlarge">\n      <img src="'),b.push(d(this.block.image_display)),b.push('" alt="'),b.push(d(this.block.title)),b.push('" />\n    </a>\n  ')):this.block.block_type==="Link"?(b.push("\n    <!-- LINK -->\n    "),this.block.image_display?(b.push('\n      <a href="'),b.push(d(this.block.link_url)),b.push('" class="external" target="_blank">\n        <img src="'),b.push(d(this.block.image_display)),b.push('" alt="'),b.push(d(this.block.title)),b.push('" />\n      </a>\n    ')):(b.push('\n      <p>\n        <a href="'),b.push(d(this.block.link_url)),b.push('" class="external url" target="_blank">'),b.push(d(this.block.link_url)),b.push("</a>\n      </p>\n    ")),b.push("\n  ")):this.block.block_type==="Text"&&(b.push('\n    <!-- TEXT -->\n    <div class="content">\n      '),b.push(this.block.content),b.push("\n    </div>\n  ")),b.push('\n\n  <!-- UNIVERSAL OUTPUT: -->\n  <div class="metadata">\n    <h3 class="title">\n      <a href="/#/'),b.push(d(this.channel.slug)),b.push("/show:"),b.push(d(this.block.id)),b.push('">\n      '),this.block.title?(b.push("\n        "),b.push(d(this.block.title)),b.push("\n      ")):b.push("\n        Untitled\n      "),b.push("\n      </a>\n    </h3>\n\n    "),this.block.block_type!=="Text"&&!!this.block.content&&(b.push('\n      <div class="description">\n        <div class="content">\n          '),b.push(this.block.content),b.push("\n        </div>\n      </div>\n    ")),b.push("\n\n    <dl class='small meta block_meta'>\n      "),this.block.link_url&&(b.push('\n        <dt>URL:</dt>\n        <dd><a href="'),b.push(d(this.block.link_url)),b.push('" target="_blank">'),b.push(d(this.block.link_url)),b.push("</a></dd>\n      ")),b.push("\n\n      "),this.block.image_remote_url&&(b.push('\n        <dt>Source:</dt>\n        <dd><a href="'),b.push(d(this.block.image_remote_url)),b.push('" class="url external" target="_blank">'),b.push(d(this.block.image_remote_url)),b.push("</a></dd>\n      ")),b.push("\n      \n      "),this.block.embed_source_url&&(b.push('\n        <dt>Source:</dt>\n        <dd><a href="'),b.push(d(this.block.embed_source_url)),b.push('" class="url external" target="_blank">'),b.push(d(this.block.embed_source_url)),b.push("</a></dd>\n      ")),b.push("\n\n      <dt>Added by:</dt>\n      <dd>"),b.push(d(this.block.username)),b.push("</dd>\n    </dl>\n  </div>\n  \n</div><!-- #block -->")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}}})
+(function(/*! Brunch !*/) {
+  if (!this.require) {
+    var modules = {}, cache = {}, require = function(name, root) {
+      var module = cache[name], path = expand(root, name), fn;
+      if (module) {
+        return module;
+      } else if (fn = modules[path] || modules[path = expand(path, './index')]) {
+        module = {id: name, exports: {}};
+        try {
+          cache[name] = module.exports;
+          fn(module.exports, function(name) {
+            return require(name, dirname(path));
+          }, module);
+          return cache[name] = module.exports;
+        } catch (err) {
+          delete cache[name];
+          throw err;
+        }
+      } else {
+        throw 'module \'' + name + '\' not found';
+      }
+    }, expand = function(root, name) {
+      var results = [], parts, part;
+      if (/^\.\.?(\/|$)/.test(name)) {
+        parts = [root, name].join('/').split('/');
+      } else {
+        parts = name.split('/');
+      }
+      for (var i = 0, length = parts.length; i < length; i++) {
+        part = parts[i];
+        if (part == '..') {
+          results.pop();
+        } else if (part != '.' && part != '') {
+          results.push(part);
+        }
+      }
+      return results.join('/');
+    }, dirname = function(path) {
+      return path.split('/').slice(0, -1).join('/');
+    };
+    this.require = function(name) {
+      return require(name, '');
+    };
+    this.require.brunch = true;
+    this.require.define = function(bundle) {
+      for (var key in bundle)
+        modules[key] = bundle[key];
+    };
+  }
+}).call(this);(this.require.define({
+  "views/collection_view": function(exports, require, module) {
+    (function() {
+  var BlockView,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  BlockView = require('views/block_view').BlockView;
+
+  exports.CollectionView = (function(_super) {
+
+    __extends(CollectionView, _super);
+
+    function CollectionView() {
+      this.addOne = __bind(this.addOne, this);
+      CollectionView.__super__.constructor.apply(this, arguments);
+    }
+
+    CollectionView.prototype.id = 'collection';
+
+    CollectionView.prototype.initialize = function() {
+      document.title = this.model.get('title');
+      return this.template = require("./templates/collection/" + this.options.mode);
+    };
+
+    CollectionView.prototype.addAll = function() {
+      return this.collection.each(this.addOne);
+    };
+
+    CollectionView.prototype.addOne = function(block) {
+      var view;
+      view = new BlockView({
+        mode: this.options.mode,
+        model: block,
+        collection: this.model.blocks,
+        channel: this.model
+      });
+      return this.$('#blocks').append(view.render().el);
+    };
+
+    CollectionView.prototype.render = function() {
+      this.$el.html(this.template({
+        channel: this.model.toJSON(),
+        blocks: this.collection.toJSON()
+      }));
+      this.addAll();
+      return this;
+    };
+
+    return CollectionView;
+
+  })(Backbone.View);
+
+}).call(this);
+
+  }
+}));
+(this.require.define({
+  "helpers": function(exports, require, module) {
+    (function() {
+
+  exports.BrunchApplication = (function() {
+
+    function BrunchApplication() {
+      var _this = this;
+      $(function() {
+        _this.initialize(_this);
+        return Backbone.history.start();
+      });
+    }
+
+    BrunchApplication.prototype.initialize = function() {
+      return null;
+    };
+
+    BrunchApplication.prototype.loading = function() {
+      return {
+        start: function() {
+          return $('body').addClass('loading');
+        },
+        stop: function() {
+          return $('body').removeClass('loading');
+        }
+      };
+    };
+
+    return BrunchApplication;
+
+  })();
+
+}).call(this);
+
+  }
+}));
+(this.require.define({
+  "collections/blocks": function(exports, require, module) {
+    (function() {
+  var Block,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  Block = require("models/block").Block;
+
+  exports.Blocks = (function(_super) {
+
+    __extends(Blocks, _super);
+
+    function Blocks() {
+      Blocks.__super__.constructor.apply(this, arguments);
+    }
+
+    Blocks.prototype.model = Block;
+
+    Blocks.prototype.comparator = function(model) {
+      return model.get('channel_connection').position;
+    };
+
+    Blocks.prototype.next = function(model) {
+      var i;
+      i = this.at(this.indexOf(model));
+      if (undefined === i || i < 0) return false;
+      return this.at(this.indexOf(model) + 1);
+    };
+
+    Blocks.prototype.prev = function(model) {
+      var i;
+      i = this.at(this.indexOf(model));
+      if (undefined === i || i < 1) return false;
+      return this.at(this.indexOf(model) - 1);
+    };
+
+    return Blocks;
+
+  })(Backbone.Collection);
+
+}).call(this);
+
+  }
+}));
+(this.require.define({
+  "models/block": function(exports, require, module) {
+    (function() {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  exports.Block = (function(_super) {
+
+    __extends(Block, _super);
+
+    function Block() {
+      this.channelConnection = __bind(this.channelConnection, this);
+      Block.__super__.constructor.apply(this, arguments);
+    }
+
+    Block.prototype.initialize = function() {
+      this.checkIfMissingImage();
+      return this.channelConnection();
+    };
+
+    Block.prototype.checkIfMissingImage = function() {
+      var missing;
+      missing = '/assets/interface/missing.png';
+      if (this.get('image_thumb') === missing) {
+        return this.set('image_thumb', null);
+      }
+    };
+
+    Block.prototype.channelConnection = function() {
+      var _this = this;
+      return this.set('channel_connection', _.find(this.get('connections'), function(connection) {
+        return connection.channel_id === app.router.channel.id;
+      }));
+    };
+
+    return Block;
+
+  })(Backbone.Model);
+
+}).call(this);
+
+  }
+}));
+(this.require.define({
+  "models/channel": function(exports, require, module) {
+    (function() {
+  var Blocks,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  Blocks = require('collections/blocks').Blocks;
+
+  exports.Channel = (function(_super) {
+
+    __extends(Channel, _super);
+
+    function Channel() {
+      Channel.__super__.constructor.apply(this, arguments);
+    }
+
+    Channel.prototype.url = function() {
+      return "http://are.na/api/v1/channels/" + (this.get('slug')) + ".json?callback=?";
+    };
+
+    Channel.prototype.maybeLoad = function(slug) {
+      var _this = this;
+      if (slug === this.get('slug')) {
+        return true;
+      } else {
+        this.clear();
+        app.loading().start();
+        this.set('slug', slug);
+        this.set('fetching', true);
+        return this.fetch({
+          success: function() {
+            _this.setupBlocks();
+            _this.set('fetching', false);
+            app.loading().stop();
+            return true;
+          },
+          error: function(error) {
+            return console.log("Error: " + error);
+          }
+        });
+      }
+    };
+
+    Channel.prototype.setupBlocks = function() {
+      return this.blocks = new Blocks(this.get('blocks'));
+    };
+
+    return Channel;
+
+  })(Backbone.Model);
+
+}).call(this);
+
+  }
+}));
+(this.require.define({
+  "routers/main_router": function(exports, require, module) {
+    (function() {
+  var BlockView, Channel, CollectionView, SingleView,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  BlockView = require('views/block_view').BlockView;
+
+  SingleView = require('views/single_view').SingleView;
+
+  CollectionView = require('views/collection_view').CollectionView;
+
+  Channel = require('models/channel').Channel;
+
+  exports.MainRouter = (function(_super) {
+
+    __extends(MainRouter, _super);
+
+    function MainRouter() {
+      MainRouter.__super__.constructor.apply(this, arguments);
+    }
+
+    MainRouter.prototype.routes = {
+      '': 'collection',
+      '/:slug': 'collection',
+      '/:slug/mode::mode': 'collection',
+      '/:slug/show::id': 'single'
+    };
+
+    MainRouter.prototype.initialize = function() {
+      return this.channel = new Channel();
+    };
+
+    MainRouter.prototype.collection = function(slug, mode) {
+      var _this = this;
+      if (mode == null) mode = 'grid';
+      this.channel.set({
+        'mode': 'mode',
+        mode: mode
+      });
+      return $.when(this.channel.maybeLoad(slug)).then(function() {
+        _this.collectionView = new CollectionView({
+          model: _this.channel,
+          collection: _this.channel.blocks,
+          mode: mode
+        });
+        return $('body').attr('class', 'collection').html(_this.collectionView.render().el);
+      });
+    };
+
+    MainRouter.prototype.single = function(slug, id) {
+      var _this = this;
+      return $.when(this.channel.maybeLoad(slug)).then(function() {
+        _this.singleView = new SingleView({
+          model: _this.channel.blocks.get(id),
+          collection: _this.channel.blocks,
+          channel: _this.channel
+        });
+        return $('body').attr('class', 'single').html(_this.singleView.render().el);
+      });
+    };
+
+    return MainRouter;
+
+  })(Backbone.Router);
+
+}).call(this);
+
+  }
+}));
+(this.require.define({
+  "views/block_view": function(exports, require, module) {
+    (function() {
+  var LightboxView,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  LightboxView = require('views/lightbox_view').LightboxView;
+
+  exports.BlockView = (function(_super) {
+
+    __extends(BlockView, _super);
+
+    function BlockView() {
+      BlockView.__super__.constructor.apply(this, arguments);
+    }
+
+    BlockView.prototype.className = 'block';
+
+    BlockView.prototype.events = {
+      'click .enlarge': 'enlarge'
+    };
+
+    BlockView.prototype.initialize = function() {
+      return this.template = require("./templates/single/" + this.options.mode);
+    };
+
+    BlockView.prototype.enlarge = function(e) {
+      e.preventDefault();
+      this.view = new LightboxView({
+        model: this.model,
+        channel: this.options.channel,
+        mode: this.options.mode
+      });
+      return $('#modal').html(this.view.render().el);
+    };
+
+    BlockView.prototype.render = function() {
+      this.$el.html(this.template({
+        mode: this.options.mode,
+        channel: this.options.channel.toJSON(),
+        block: this.model.toJSON()
+      }));
+      return this;
+    };
+
+    return BlockView;
+
+  })(Backbone.View);
+
+}).call(this);
+
+  }
+}));
+(this.require.define({
+  "initialize": function(exports, require, module) {
+    (function() {
+  var BrunchApplication, MainRouter,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  BrunchApplication = require('helpers').BrunchApplication;
+
+  MainRouter = require('routers/main_router').MainRouter;
+
+  exports.Application = (function(_super) {
+
+    __extends(Application, _super);
+
+    function Application() {
+      Application.__super__.constructor.apply(this, arguments);
+    }
+
+    Application.prototype.initialize = function() {
+      this.loading().start();
+      return this.router = new MainRouter;
+    };
+
+    return Application;
+
+  })(BrunchApplication);
+
+  window.app = new exports.Application;
+
+}).call(this);
+
+  }
+}));
+(this.require.define({
+  "views/lightbox_view": function(exports, require, module) {
+    (function() {
+  var template,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  template = require('./templates/single/lightbox');
+
+  exports.LightboxView = (function(_super) {
+
+    __extends(LightboxView, _super);
+
+    function LightboxView() {
+      LightboxView.__super__.constructor.apply(this, arguments);
+    }
+
+    LightboxView.prototype.className = 'lightbox';
+
+    LightboxView.prototype.events = {
+      'click *': 'remove'
+    };
+
+    LightboxView.prototype.initialize = function() {
+      console.log(this.$el);
+      return this.$el.removeClass('hide');
+    };
+
+    LightboxView.prototype.render = function() {
+      this.$el.html(template({
+        channel: this.options.channel.toJSON(),
+        block: this.model.toJSON()
+      }));
+      return this;
+    };
+
+    return LightboxView;
+
+  })(Backbone.View);
+
+}).call(this);
+
+  }
+}));
+(this.require.define({
+  "views/single_view": function(exports, require, module) {
+    (function() {
+  var BlockView, template,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  template = require('./templates/single/list');
+
+  BlockView = require('views/block_view').BlockView;
+
+  exports.SingleView = (function(_super) {
+
+    __extends(SingleView, _super);
+
+    function SingleView() {
+      SingleView.__super__.constructor.apply(this, arguments);
+    }
+
+    SingleView.prototype.id = 'single';
+
+    SingleView.prototype.className = 'block';
+
+    SingleView.prototype.initialize = function() {
+      return document.title = this.model.get('title') ? "" + (this.options.channel.get('title')) + ": " + (this.model.get('title')) : this.options.channel.get('title');
+    };
+
+    SingleView.prototype.render = function(id) {
+      this.$el.html(template({
+        channel: this.options.channel.toJSON(),
+        block: this.model.toJSON(),
+        blocks: this.collection.toJSON(),
+        next: this.collection.next(this.model),
+        prev: this.collection.prev(this.model)
+      }));
+      return this;
+    };
+
+    return SingleView;
+
+  })(BlockView);
+
+}).call(this);
+
+  }
+}));
+(this.require.define({
+  "views/templates/collection/grid": function(exports, require, module) {
+    module.exports = function (__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+    
+      __out.push('<div id="modal" class="hide"></div>\n<div id="blocks" class="grid"></div>\n<h1>');
+    
+      __out.push(__sanitize(this.channel.title));
+    
+      __out.push('</h1>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}
+  }
+}));
+(this.require.define({
+  "views/templates/collection/list": function(exports, require, module) {
+    module.exports = function (__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+    
+      __out.push('<div id="modal" class="hide"></div>\n<div id="blocks" class="list"></div>\n<h1>');
+    
+      __out.push(__sanitize(this.channel.title));
+    
+      __out.push('</h1>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}
+  }
+}));
+(this.require.define({
+  "views/templates/single/grid": function(exports, require, module) {
+    module.exports = function (__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+    
+      __out.push('<div class="thumb">\n  ');
+    
+      if (this.block.image_thumb) {
+        __out.push('\n    <div class="image">\n      <a href="/#/');
+        __out.push(__sanitize(this.channel.slug));
+        __out.push('/show:');
+        __out.push(__sanitize(this.block.id));
+        __out.push('">\n        <img src="');
+        __out.push(__sanitize(this.block.image_thumb));
+        __out.push('" alt="');
+        __out.push(__sanitize(this.block.title));
+        __out.push('" />\n      </a>\n    </div>\n  ');
+      } else if (this.block.title) {
+        __out.push('\n    <a href="/#/');
+        __out.push(__sanitize(this.channel.slug));
+        __out.push('/show:');
+        __out.push(__sanitize(this.block.id));
+        __out.push('">\n      ');
+        __out.push(__sanitize(_.str.prune(this.block.title, 30)));
+        __out.push('\n    </a>\n  ');
+      } else {
+        __out.push('\n    <a href="/#/');
+        __out.push(__sanitize(this.channel.slug));
+        __out.push('/show:');
+        __out.push(__sanitize(this.block.id));
+        __out.push('">\n      Untitled\n    </a>\n  ');
+      }
+    
+      __out.push('\n</div>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}
+  }
+}));
+(this.require.define({
+  "views/templates/single/lightbox": function(exports, require, module) {
+    module.exports = function (__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+    
+      __out.push('Hello world');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}
+  }
+}));
+(this.require.define({
+  "views/templates/single/list": function(exports, require, module) {
+    module.exports = function (__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+    
+      if (this.prev || this.next) {
+        __out.push('\n  <nav>\n    ');
+        if (this.prev) {
+          __out.push('\n      <a href="/#/');
+          __out.push(__sanitize(this.channel.slug));
+          __out.push('/show:');
+          __out.push(__sanitize(this.prev.id));
+          __out.push('">Previous</a>\n    ');
+        }
+        __out.push('\n    ');
+        if (this.channel.mode) {
+          __out.push('\n      <a href="/#/');
+          __out.push(__sanitize(this.channel.slug));
+          __out.push('/mode:');
+          __out.push(__sanitize(this.channel.mode));
+          __out.push('">Up</a>\n    ');
+        } else {
+          __out.push('\n      <a href="/#/');
+          __out.push(__sanitize(this.channel.slug));
+          __out.push('">Up</a>\n    ');
+        }
+        __out.push('\n    ');
+        if (this.next) {
+          __out.push('\n      <a href="/#/');
+          __out.push(__sanitize(this.channel.slug));
+          __out.push('/show:');
+          __out.push(__sanitize(this.next.id));
+          __out.push('">Next</a>\n    ');
+        }
+        __out.push('\n  </nav>\n');
+      }
+    
+      __out.push('\n\n<div id="block_');
+    
+      __out.push(__sanitize(this.block.id));
+    
+      __out.push('" class="full ');
+    
+      __out.push(__sanitize(this.block.block_type.toLowerCase()));
+    
+      __out.push('" data-type="');
+    
+      __out.push(__sanitize(this.block.block_type));
+    
+      __out.push('">\n\n  <!-- TYPE-SPECIFIC OUTPUT: -->\n  ');
+    
+      if (this.block.block_type === 'Media') {
+        __out.push('\n    <!-- MEDIA -->\n    <div class="embed">\n      ');
+        if (this.block.embed_html) {
+          __out.push('\n        ');
+          __out.push(this.block.embed_html);
+          __out.push('\n      ');
+        } else {
+          __out.push('\n        <a href="');
+          __out.push(__sanitize(this.block.embed_source_url));
+          __out.push('" class="url external">\n          ');
+          __out.push(__sanitize(this.block.embed_source_url));
+          __out.push('\n        </a>\n      ');
+        }
+        __out.push('\n    </div>\n  ');
+      } else if (this.block.block_type === 'Image') {
+        __out.push('\n    <!-- IMAGE -->\n    <a href="');
+        __out.push(__sanitize(this.block.image_original));
+        __out.push('" class="enlarge">\n      <img src="');
+        __out.push(__sanitize(this.block.image_display));
+        __out.push('" alt="');
+        __out.push(__sanitize(this.block.title));
+        __out.push('" />\n    </a>\n  ');
+      } else if (this.block.block_type === 'Link') {
+        __out.push('\n    <!-- LINK -->\n    ');
+        if (this.block.image_display) {
+          __out.push('\n      <a href="');
+          __out.push(__sanitize(this.block.link_url));
+          __out.push('" class="external" target="_blank">\n        <img src="');
+          __out.push(__sanitize(this.block.image_display));
+          __out.push('" alt="');
+          __out.push(__sanitize(this.block.title));
+          __out.push('" />\n      </a>\n    ');
+        } else {
+          __out.push('\n      <p>\n        <a href="');
+          __out.push(__sanitize(this.block.link_url));
+          __out.push('" class="external url" target="_blank">');
+          __out.push(__sanitize(this.block.link_url));
+          __out.push('</a>\n      </p>\n    ');
+        }
+        __out.push('\n  ');
+      } else if (this.block.block_type === 'Text') {
+        __out.push('\n    <!-- TEXT -->\n    <div class="content">\n      ');
+        __out.push(this.block.content);
+        __out.push('\n    </div>\n  ');
+      }
+    
+      __out.push('\n\n  <!-- UNIVERSAL OUTPUT: -->\n  <div class="metadata">\n    <h3 class="title">\n      <a href="/#/');
+    
+      __out.push(__sanitize(this.channel.slug));
+    
+      __out.push('/show:');
+    
+      __out.push(__sanitize(this.block.id));
+    
+      __out.push('">\n      ');
+    
+      if (this.block.title) {
+        __out.push('\n        ');
+        __out.push(__sanitize(this.block.title));
+        __out.push('\n      ');
+      } else {
+        __out.push('\n        Untitled\n      ');
+      }
+    
+      __out.push('\n      </a>\n    </h3>\n\n    ');
+    
+      if (!(this.block.block_type === 'Text' || !this.block.content)) {
+        __out.push('\n      <div class="description">\n        <div class="content">\n          ');
+        __out.push(this.block.content);
+        __out.push('\n        </div>\n      </div>\n    ');
+      }
+    
+      __out.push('\n\n    <dl class=\'small meta block_meta\'>\n      ');
+    
+      if (this.block.link_url) {
+        __out.push('\n        <dt>URL:</dt>\n        <dd><a href="');
+        __out.push(__sanitize(this.block.link_url));
+        __out.push('" target="_blank">');
+        __out.push(__sanitize(this.block.link_url));
+        __out.push('</a></dd>\n      ');
+      }
+    
+      __out.push('\n\n      ');
+    
+      if (this.block.image_remote_url) {
+        __out.push('\n        <dt>Source:</dt>\n        <dd><a href="');
+        __out.push(__sanitize(this.block.image_remote_url));
+        __out.push('" class="url external" target="_blank">');
+        __out.push(__sanitize(this.block.image_remote_url));
+        __out.push('</a></dd>\n      ');
+      }
+    
+      __out.push('\n      \n      ');
+    
+      if (this.block.embed_source_url) {
+        __out.push('\n        <dt>Source:</dt>\n        <dd><a href="');
+        __out.push(__sanitize(this.block.embed_source_url));
+        __out.push('" class="url external" target="_blank">');
+        __out.push(__sanitize(this.block.embed_source_url));
+        __out.push('</a></dd>\n      ');
+      }
+    
+      __out.push('\n\n      <dt>Added by:</dt>\n      <dd>');
+    
+      __out.push(__sanitize(this.block.username));
+    
+      __out.push('</dd>\n    </dl>\n  </div>\n  \n</div><!-- #block -->');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}
+  }
+}));

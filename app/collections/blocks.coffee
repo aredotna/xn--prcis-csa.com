@@ -3,7 +3,7 @@
 class exports.Blocks extends Backbone.Collection
   model: Block
   
-  comparator: (block) -> block.get('channel_connection').position
+  comparator: (model) -> model.get('channel_connection').position
 
   next: (model) ->
     i = @at @indexOf(model)

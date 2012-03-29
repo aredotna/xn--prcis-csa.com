@@ -23,7 +23,7 @@ exports.config =
           'vendor/scripts/jquery-1.7.1.js',
           'vendor/scripts/underscore-1.3.1.js',
           'vendor/scripts/backbone-0.9.1.js',
-          'vendor/scripts/params.js'
+          'vendor/scripts/underscore.string.js'
         ]
 
     stylesheets:
@@ -42,7 +42,7 @@ exports.config =
   # framework: 'backbone'
 
   # Enable or disable minifying of result js / css files.
-  minify: yes
+  minify: no
 
   # Settings of web server that will run with `brunch watch [--server]`.
   # server:

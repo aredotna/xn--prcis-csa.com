@@ -7,7 +7,7 @@
     </div>
   <% else if @block.title: %>
     <a href="/#/<%= @channel.slug %>/show:<%= @block.id %>">
-      <%= @block.title %>
+      <%= _.str.prune(@block.title, 30) %>
     </a>
   <% else: %>
     <a href="/#/<%= @channel.slug %>/show:<%= @block.id %>">
