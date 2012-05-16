@@ -1,85 +1,92 @@
+@import url(http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic)
 @import 'nib'
 
-body
-  font-size: 14px
-  line-height: 18px
-  font-family: serif
-  padding: 5%
-  // Collection
-  &.collection
-    color: #111
-    background: #fff
-    a
-      color: #000
-  // Single
-  &.single
-    background: #000
-    color: #eee
-    a
-      color: #fff
-  // Loading
-  &.loading
-    background: #fff url('../images/load.gif') top left no-repeat
+// VARIABLES
+// ---------
+base_font_size   = 14px
+base_line_height = 20px
+text_color       = #000
+link_color       = #000
+max_width        = 720px
 
-h1, h2, h3, h4, nav
-  font-family: sans-serif
+// BASE
+// ----
+*
+  -webkit-box-sizing: border-box
+  -moz-box-sizing: border-box
+  box-sizing: border-box
+
+html, body
+  min-height: 100%
+
+body
+  margin: (base_line_height * 4) auto
+  width: max_width
+  font-size: base_font_size
+  line-height: base_line_height
+  font-family: 'Droid Serif', serif
+  font-style: normal
+  font-weight: 400
+  color: text_color
+  
+  a, a:visited
+    color: link_color
+    text-decoration: none
+    &:hover
+      color: link_color
+      text-decoration: underline
+
+  // LOADING INDICATOR
+  &.loading
+    background: #fff url('../images/load.gif') center center no-repeat
 
 h1, h2, h3, h4
+  font-size: base_font_size
+  line-height: base_line_height
+  font-weight: normal
+
+h1
   text-align: center
-  font-size: 16px
+  margin: base_line_height
+  text-decoration: underline
+
+h3, .description
+  font-size: base_font_size - 2
+  font-family: 'Lucida Grande', sans-serif
 
 nav
-  margin: 20px 0
-  text-align: center
-
-.title, .content
-  font-size: 16px
+  margin: base_line_height 0
   text-align: left
 
+// STRUCTURE
+// ---------
 
-#blocks.list .block, #single.block
-  margin: 20px 0
-  padding-bottom: 20px
-  border-bottom: 1px solid #000
-  .image, .link, .media
-    text-align: center
-#blocks.grid
-  text-align: center
-  .block
-    display: inline-block
-    height: 250px
-    width: 250px
-    line-height: 250px
-    text-align: center
-    vertical-align: middle
+.block
+  padding: base_line_height 0
+  margin: base_line_height 0
+  img
+    border: 1px solid rgba(0,0,0,.1)
 
-.metadata dl
-  dt
-    font-weight: bold
-  dt, dd
-    line-height: 16px
-    font-size: 12px
-    font-family: sans-serif
-    text-align: left
-    margin: 0
-    a
-      text-decoration: none
+.metadata
+  margin: base_line_height 0
+  .description
+    border-left: 2px solid #ccc
+    padding-left: (base_line_height / 2)
+    color: #666
 
-// MODAL
-// -----
-#modal
-  position    : fixed
-  top         : 0
-  left        : 0
-  z-index     : 1
-  background  : red
-  width       : 100%
-  height      : 100%
-
-// UTILITY
+// NON-SEMANTIC / UTILITY
 // -------
 .hide
   display: none
 
 .show
   display: block
+
+.meta-sep
+  color: #ccc
+  margin: 0 base_line_height * 0.25
+
+.arena-mark
+  width: 21px
+  height: 12px
+  background: transparent url('../images/arena-mark.png') no-repeat center center

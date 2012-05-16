@@ -105,7 +105,7 @@
     BrunchApplication.prototype.loading = function() {
       return {
         start: function() {
-          return $('body').addClass('loading');
+          return $('body').html('').addClass('loading');
         },
         stop: function() {
           return $('body').removeClass('loading');
@@ -248,7 +248,7 @@
             return true;
           },
           error: function(error) {
-            return console.log("Error: " + error);
+            return console.log(error);
           }
         });
       }
@@ -302,7 +302,7 @@
 
     MainRouter.prototype.collection = function(slug, mode) {
       var _this = this;
-      if (mode == null) mode = 'grid';
+      if (mode == null) mode = 'list';
       this.channel.set({
         'mode': 'mode',
         mode: mode
@@ -573,11 +573,11 @@
   (function() {
     (function() {
     
-      __out.push('<div id="modal" class="hide"></div>\n<div id="blocks" class="list"></div>\n<h1>');
+      __out.push('<h1>');
     
       __out.push(__sanitize(this.channel.title));
     
-      __out.push('</h1>');
+      __out.push('</h1>\n\n<div id="blocks" class="list"></div>');
     
     }).call(this);
     
@@ -753,7 +753,27 @@
     
       __out.push(__sanitize(this.block.block_type));
     
-      __out.push('">\n\n  <!-- TYPE-SPECIFIC OUTPUT: -->\n  ');
+      __out.push('">\n    <h3 class="title">\n      <a href="/#/');
+    
+      __out.push(__sanitize(this.channel.slug));
+    
+      __out.push('/show:');
+    
+      __out.push(__sanitize(this.block.id));
+    
+      __out.push('">¶</a>\n      ');
+    
+      if (this.block.title) {
+        __out.push('\n        <span class="meta-sep">|</span>\n        <a href="/#/');
+        __out.push(__sanitize(this.channel.slug));
+        __out.push('/show:');
+        __out.push(__sanitize(this.block.id));
+        __out.push('">\n          ');
+        __out.push(__sanitize(this.block.title));
+        __out.push('\n        </a>\n      ');
+      }
+    
+      __out.push('\n    </h3>\n\n  ');
     
       if (this.block.block_type === 'Media') {
         __out.push('\n    <!-- MEDIA -->\n    <div class="embed">\n      ');
@@ -768,7 +788,7 @@
           __out.push(__sanitize(this.block.embed_source_url));
           __out.push('\n        </a>\n      ');
         }
-        __out.push('\n    </div>\n  ');
+        __out.push('\n    </div>\n\n  ');
       } else if (this.block.block_type === 'Image') {
         __out.push('\n    <!-- IMAGE -->\n    <a href="');
         __out.push(__sanitize(this.block.image_original));
@@ -776,12 +796,12 @@
         __out.push(__sanitize(this.block.image_display));
         __out.push('" alt="');
         __out.push(__sanitize(this.block.title));
-        __out.push('" />\n    </a>\n  ');
+        __out.push('" />\n    </a>\n\n  ');
       } else if (this.block.block_type === 'Link') {
         __out.push('\n    <!-- LINK -->\n    ');
         if (this.block.image_display) {
           __out.push('\n      <a href="');
-          __out.push(__sanitize(this.block.link_url));
+          __out.push(__sanitize(this.block.source_url));
           __out.push('" class="external" target="_blank">\n        <img src="');
           __out.push(__sanitize(this.block.image_display));
           __out.push('" alt="');
@@ -789,79 +809,27 @@
           __out.push('" />\n      </a>\n    ');
         } else {
           __out.push('\n      <p>\n        <a href="');
-          __out.push(__sanitize(this.block.link_url));
+          __out.push(__sanitize(this.block.source_url));
           __out.push('" class="external url" target="_blank">');
-          __out.push(__sanitize(this.block.link_url));
+          __out.push(__sanitize(this.block.source_url));
           __out.push('</a>\n      </p>\n    ');
         }
-        __out.push('\n  ');
+        __out.push('\n\n  ');
       } else if (this.block.block_type === 'Text') {
         __out.push('\n    <!-- TEXT -->\n    <div class="content">\n      ');
         __out.push(this.block.content);
         __out.push('\n    </div>\n  ');
       }
     
-      __out.push('\n\n  <!-- UNIVERSAL OUTPUT: -->\n  <div class="metadata">\n    <h3 class="title">\n      <a href="/#/');
+      __out.push('\n\n\n  <div class="metadata">\n    ');
     
-      __out.push(__sanitize(this.channel.slug));
-    
-      __out.push('/show:');
-    
-      __out.push(__sanitize(this.block.id));
-    
-      __out.push('">\n      ');
-    
-      if (this.block.title) {
-        __out.push('\n        ');
-        __out.push(__sanitize(this.block.title));
-        __out.push('\n      ');
-      } else {
-        __out.push('\n        Untitled\n      ');
+      if (this.block.description) {
+        __out.push('\n      <div class="description">\n        ');
+        __out.push(this.block.description);
+        __out.push('\n      </div>\n    ');
       }
     
-      __out.push('\n      </a>\n    </h3>\n\n    ');
-    
-      if (!(this.block.block_type === 'Text' || !this.block.content)) {
-        __out.push('\n      <div class="description">\n        <div class="content">\n          ');
-        __out.push(this.block.content);
-        __out.push('\n        </div>\n      </div>\n    ');
-      }
-    
-      __out.push('\n\n    <dl class=\'small meta block_meta\'>\n      ');
-    
-      if (this.block.link_url) {
-        __out.push('\n        <dt>URL:</dt>\n        <dd><a href="');
-        __out.push(__sanitize(this.block.link_url));
-        __out.push('" target="_blank">');
-        __out.push(__sanitize(this.block.link_url));
-        __out.push('</a></dd>\n      ');
-      }
-    
-      __out.push('\n\n      ');
-    
-      if (this.block.image_remote_url) {
-        __out.push('\n        <dt>Source:</dt>\n        <dd><a href="');
-        __out.push(__sanitize(this.block.image_remote_url));
-        __out.push('" class="url external" target="_blank">');
-        __out.push(__sanitize(this.block.image_remote_url));
-        __out.push('</a></dd>\n      ');
-      }
-    
-      __out.push('\n      \n      ');
-    
-      if (this.block.embed_source_url) {
-        __out.push('\n        <dt>Source:</dt>\n        <dd><a href="');
-        __out.push(__sanitize(this.block.embed_source_url));
-        __out.push('" class="url external" target="_blank">');
-        __out.push(__sanitize(this.block.embed_source_url));
-        __out.push('</a></dd>\n      ');
-      }
-    
-      __out.push('\n\n      <dt>Added by:</dt>\n      <dd>');
-    
-      __out.push(__sanitize(this.block.username));
-    
-      __out.push('</dd>\n    </dl>\n  </div>\n  \n</div><!-- #block -->');
+      __out.push('\n  </div>\n  \n</div><!-- #block -->');
     
     }).call(this);
     

@@ -13,15 +13,14 @@ class exports.MainRouter extends Backbone.Router
   initialize: ->
     @channel = new Channel()
 
-  collection: (slug, mode = 'grid') ->
-    # Save the current view mode in the channel
+  collection: (slug, mode = 'list') ->
     @channel.set {'mode', mode}
 
     $.when(@channel.maybeLoad slug).then =>
       @collectionView = new CollectionView
-        model       : @channel
-        collection  : @channel.blocks
-        mode        : mode
+        model      : @channel
+        collection : @channel.blocks
+        mode       : mode
       $('body')
         .attr('class', 'collection')
         .html @collectionView.render().el
@@ -29,9 +28,9 @@ class exports.MainRouter extends Backbone.Router
   single: (slug, id) ->
     $.when(@channel.maybeLoad slug).then =>
       @singleView = new SingleView
-        model       : @channel.blocks.get id
-        collection  : @channel.blocks
-        channel     : @channel
+        model      : @channel.blocks.get id
+        collection : @channel.blocks
+        channel    : @channel
       $('body')
         .attr('class', 'single')
         .html @singleView.render().el

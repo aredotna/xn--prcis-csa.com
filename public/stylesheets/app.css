@@ -200,26 +200,25 @@ input:invalid, textarea:invalid { background-color: #f0dddd; }
 
 table { border-collapse: collapse; border-spacing: 0; }
 td { vertical-align: top; }
-body{font-size:14px;line-height:18px;font-family:serif;padding:5%;}
-body.collection{color:#111;background:#fff;}
-body.collection a{color:#000}
-body.single{background:#000;color:#eee;}
-body.single a{color:#fff}
-body.loading{background:#fff url("../images/load.gif") top left no-repeat}
-h1,h2,h3,h4,nav{font-family:sans-serif}
-h1,h2,h3,h4{text-align:center;font-size:16px}
-nav{margin:20px 0;text-align:center}
-.title,.content{font-size:16px;text-align:left}
-#blocks.list .block,#single.block{margin:20px 0;padding-bottom:20px;border-bottom:1px solid #000;}
-#blocks.list .block .image,#single.block .image,#blocks.list .block .link,#single.block .link,#blocks.list .block .media,#single.block .media{text-align:center}
-#blocks.grid{text-align:center;}
-#blocks.grid .block{display:inline-block;height:250px;width:250px;line-height:250px;text-align:center;vertical-align:middle}
-.metadata dl dt{font-weight:bold}
-.metadata dl dt,.metadata dl dd{line-height:16px;font-size:12px;font-family:sans-serif;text-align:left;margin:0;}
-.metadata dl dt a,.metadata dl dd a{text-decoration:none}
-#modal{position:fixed;top:0;left:0;z-index:1;background:#f00;width:100%;height:100%}
+@import url("http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic");
+*{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:80px auto;width:720px;font-size:14px;line-height:20px;font-family:'Droid Serif',serif;font-style:normal;font-weight:400;color:#000;}
+body a,body a:visited{color:#000;text-decoration:none;}
+body a:hover,body a:visited:hover{color:#000;text-decoration:underline}
+body.loading{background:#fff url("../images/load.gif") center center no-repeat}
+h1,h2,h3,h4{font-size:14px;line-height:20px;font-weight:normal}
+h1{text-align:center;margin:20px;text-decoration:underline}
+h3,.description{font-size:12px;font-family:'Lucida Grande',sans-serif}
+nav{margin:20px 0;text-align:left}
+.block{padding:20px 0;margin:20px 0;}
+.block img{border:1px solid rgba(0,0,0,0.10)}
+.metadata{margin:20px 0;}
+.metadata .description{border-left:2px solid #ccc;padding-left:10px;color:#666}
 .hide{display:none}
 .show{display:block}
+.meta-sep{color:#ccc;margin:0 5px}
+.arena-mark{width:21px;height:12px;background:transparent url("../images/arena-mark.png") no-repeat center center}
 /* ==|== non-semantic helper classes ========================================
    Please define your styles before this section.
    ========================================================================== */

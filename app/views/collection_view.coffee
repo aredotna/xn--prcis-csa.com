@@ -15,10 +15,10 @@ class exports.CollectionView extends Backbone.View
     
   addOne: (block) =>
     view = new BlockView
-      mode        : @options.mode
-      model       : block
-      collection  : @model.blocks
-      channel     : @model
+      mode       : @options.mode
+      model      : block
+      collection : @model.blocks
+      channel    : @model
 
     @$('#blocks').append view.render().el
 
