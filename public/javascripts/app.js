@@ -710,7 +710,7 @@
     (function() {
     
       if (this.prev || this.next) {
-        __out.push('\n  <nav>\n    ');
+        __out.push('\n  <nav class=\'pagination\'>\n    ');
         if (this.prev) {
           __out.push('\n      <a href="/#/');
           __out.push(__sanitize(this.channel.slug));
@@ -720,15 +720,15 @@
         }
         __out.push('\n    ');
         if (this.channel.mode) {
-          __out.push('\n      <a href="/#/');
+          __out.push('\n      <span class="meta-sep">|</span>\n      <a href="/#/');
           __out.push(__sanitize(this.channel.slug));
           __out.push('/mode:');
           __out.push(__sanitize(this.channel.mode));
-          __out.push('">Up</a>\n    ');
+          __out.push('">Up</a>\n      <span class="meta-sep">|</span>\n    ');
         } else {
-          __out.push('\n      <a href="/#/');
+          __out.push('\n      <span class="meta-sep">|</span>\n      <a href="/#/');
           __out.push(__sanitize(this.channel.slug));
-          __out.push('">Up</a>\n    ');
+          __out.push('">Up</a>\n      <span class="meta-sep">|</span>\n    ');
         }
         __out.push('\n    ');
         if (this.next) {

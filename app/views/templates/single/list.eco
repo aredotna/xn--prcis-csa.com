@@ -1,12 +1,16 @@
 <% if @prev or @next: %>
-  <nav>
+  <nav class='pagination'>
     <% if @prev: %>
       <a href="/#/<%= @channel.slug %>/show:<%= @prev.id %>">Previous</a>
     <% end %>
     <% if @channel.mode: %>
+      <span class="meta-sep">|</span>
       <a href="/#/<%= @channel.slug %>/mode:<%= @channel.mode %>">Up</a>
+      <span class="meta-sep">|</span>
     <% else: %>
+      <span class="meta-sep">|</span>
       <a href="/#/<%= @channel.slug %>">Up</a>
+      <span class="meta-sep">|</span>
     <% end %>
     <% if @next: %>
       <a href="/#/<%= @channel.slug %>/show:<%= @next.id %>">Next</a>

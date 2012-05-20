@@ -210,9 +210,9 @@ body.loading{background:#fff url("../images/load.gif") center center no-repeat}
 h1,h2,h3,h4{font-size:14px;line-height:20px;font-weight:normal}
 h1{text-align:center;margin:20px;text-decoration:underline}
 h3,.description{font-size:12px;font-family:'Lucida Grande',sans-serif}
-nav{margin:20px 0;text-align:left}
-.block{padding:20px 0;margin:20px 0;}
-.block img{border:1px solid rgba(0,0,0,0.10)}
+nav{margin:20px;text-align:center}
+.full{padding:20px 0;margin:20px 0;}
+.full img{border:1px solid rgba(0,0,0,0.10)}
 .metadata{margin:20px 0;}
 .metadata .description{border-left:2px solid #ccc;padding-left:10px;color:#666}
 .hide{display:none}
