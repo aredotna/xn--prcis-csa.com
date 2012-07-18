@@ -1,0 +1,3 @@
+<form id="channel">
+  <input id="channel_slug" name="channel[slug]" placeholder="Channel?" tabindex="0" />
+</form>
