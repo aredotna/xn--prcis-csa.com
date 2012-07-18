@@ -287,9 +287,11 @@ window.require.define({"models/channel": function(exports, require, module) {
 
 window.require.define({"routers/main_router": function(exports, require, module) {
   (function() {
-    var BlockView, Channel, CollectionView, SingleView,
+    var BlockView, Channel, CollectionView, IndexView, SingleView,
       __hasProp = Object.prototype.hasOwnProperty,
       __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+    IndexView = require('views/index_view').IndexView;
 
     BlockView = require('views/block_view').BlockView;
 
@@ -308,14 +310,20 @@ window.require.define({"routers/main_router": function(exports, require, module)
       }
 
       MainRouter.prototype.routes = {
-        '': 'collection',
+        '': 'index',
         '/:slug': 'collection',
         '/:slug/mode::mode': 'collection',
         '/:slug/show::id': 'single'
       };
 
       MainRouter.prototype.initialize = function() {
+        this.indexView = new IndexView();
         return this.channel = new Channel();
+      };
+
+      MainRouter.prototype.index = function() {
+        $('body').html(this.indexView.render().el);
+        return app.loading().stop();
       };
 
       MainRouter.prototype.collection = function(slug, mode) {

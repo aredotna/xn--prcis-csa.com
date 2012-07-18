@@ -1,3 +1,4 @@
+{IndexView}      = require 'views/index_view'
 {BlockView}      = require 'views/block_view'
 {SingleView}     = require 'views/single_view'
 {CollectionView} = require 'views/collection_view'
@@ -5,13 +6,20 @@
 
 class exports.MainRouter extends Backbone.Router
   routes:
-    ''                  : 'collection'
+    ''                  : 'index'
     '/:slug'            : 'collection'
     '/:slug/mode::mode' : 'collection'
     '/:slug/show::id'   : 'single'
 
   initialize: ->
+    @indexView = new IndexView()
     @channel = new Channel()
+
+  index: ->
+    $('body')
+      .html @indexView.render().el
+    
+    app.loading().stop()
 
   collection: (slug, mode = 'list') ->
     @channel.set {'mode', mode}
