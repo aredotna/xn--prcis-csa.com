@@ -3,14 +3,12 @@
 class exports.Blocks extends Backbone.Collection
   model: Block
   
-  comparator: (model) -> model.get('channel_connection').position
+  comparator: (model) ->
+    model.get('channel_connection').position
 
   next: (model) ->
-    i = @at @indexOf(model)
-    return false if `undefined` is i or i < 0
-    @at @indexOf(model) + 1
+    @at((@indexOf(model) + 1) % _.size(@models))
 
   prev: (model) ->
-    i = @at @indexOf(model)
-    return false if `undefined` is i or i < 1
-    @at @indexOf(model) - 1
+    index = @indexOf(model) - 1
+    @at(if index > -1 then index else _.size(@models) - 1)

@@ -26,6 +26,10 @@ class exports.MainRouter extends Backbone.Router
 
   overview: (slug) ->
     $.when(@channel.maybeLoad slug).then =>
+      
+      app.currentChannel = @channel
+      app.currentCollection = @channel.blocks
+
       @collectionView = new CollectionView
         model      : @channel
         collection : @channel.blocks

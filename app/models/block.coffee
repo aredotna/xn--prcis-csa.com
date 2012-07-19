@@ -13,3 +13,6 @@ class exports.Block extends Backbone.Model
     @set('channel_connection', _.find(@get('connections'), (connection) =>
       connection.channel_id is app.router.channel.id)
     )
+
+  next: -> @collection.next(this)
+  prev: -> @collection.prev(this)

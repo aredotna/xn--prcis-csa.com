@@ -6,16 +6,22 @@ class exports.SingleView extends BlockView
   className: 'block'
 
   initialize: ->
+    @channel = @options.channel
+
+    app.currentChannel = @channel
+    app.currentBlock = @model
+    app.currentCollection = @collection
+
     # Set the page title
     document.title = 
       if @model.get 'title'
-        "#{@options.channel.get 'title'}: #{@model.get 'title'}"
+        "#{@channel.get 'title'}: #{@model.get 'title'}"
       else
-        @options.channel.get 'title'
+        @channel.get 'title'
 
   render: (id) ->
     @$el.html template
-      channel : @options.channel.toJSON()
+      channel : @channel.toJSON()
       block   : @model.toJSON()
       blocks  : @collection.toJSON()
       next    : @collection.next(@model)

@@ -97,17 +97,13 @@ window.require.define({"collections/blocks": function(exports, require, module) 
       };
 
       Blocks.prototype.next = function(model) {
-        var i;
-        i = this.at(this.indexOf(model));
-        if (undefined === i || i < 0) return false;
-        return this.at(this.indexOf(model) + 1);
+        return this.at((this.indexOf(model) + 1) % _.size(this.models));
       };
 
       Blocks.prototype.prev = function(model) {
-        var i;
-        i = this.at(this.indexOf(model));
-        if (undefined === i || i < 1) return false;
-        return this.at(this.indexOf(model) - 1);
+        var index;
+        index = this.indexOf(model) - 1;
+        return this.at(index > -1 ? index : _.size(this.models) - 1);
       };
 
       return Blocks;
@@ -159,13 +155,15 @@ window.require.define({"helpers": function(exports, require, module) {
 
 window.require.define({"initialize": function(exports, require, module) {
   (function() {
-    var BrunchApplication, MainRouter,
+    var BrunchApplication, MainRouter, Shortcuts,
       __hasProp = Object.prototype.hasOwnProperty,
       __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
     BrunchApplication = require('helpers').BrunchApplication;
 
     MainRouter = require('routers/main_router').MainRouter;
+
+    Shortcuts = require('views/shortcuts').Shortcuts;
 
     exports.Application = (function(_super) {
 
@@ -177,7 +175,8 @@ window.require.define({"initialize": function(exports, require, module) {
 
       Application.prototype.initialize = function() {
         this.loading().start();
-        return this.router = new MainRouter;
+        this.router = new MainRouter;
+        return this.shortcuts = new Shortcuts;
       };
 
       return Application;
@@ -223,6 +222,14 @@ window.require.define({"models/block": function(exports, require, module) {
         return this.set('channel_connection', _.find(this.get('connections'), function(connection) {
           return connection.channel_id === app.router.channel.id;
         }));
+      };
+
+      Block.prototype.next = function() {
+        return this.collection.next(this);
+      };
+
+      Block.prototype.prev = function() {
+        return this.collection.prev(this);
       };
 
       return Block;
@@ -341,6 +348,8 @@ window.require.define({"routers/main_router": function(exports, require, module)
       MainRouter.prototype.overview = function(slug) {
         var _this = this;
         return $.when(this.channel.maybeLoad(slug)).then(function() {
+          app.currentChannel = _this.channel;
+          app.currentCollection = _this.channel.blocks;
           _this.collectionView = new CollectionView({
             model: _this.channel,
             collection: _this.channel.blocks,
@@ -512,6 +521,49 @@ window.require.define({"views/index_view": function(exports, require, module) {
   
 }});
 
+window.require.define({"views/shortcuts": function(exports, require, module) {
+  (function() {
+    var __hasProp = Object.prototype.hasOwnProperty,
+      __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+    exports.Shortcuts = (function(_super) {
+
+      __extends(Shortcuts, _super);
+
+      function Shortcuts() {
+        Shortcuts.__super__.constructor.apply(this, arguments);
+      }
+
+      Shortcuts.prototype.shortcuts = {
+        'left': 'prev',
+        'right': 'next',
+        'up': 'up'
+      };
+
+      Shortcuts.prototype.next = function() {
+        var _next;
+        _next = app.currentCollection.next(app.currentBlock);
+        return window.location.hash = "#/" + (app.currentChannel.get('slug')) + "/show:" + _next.id;
+      };
+
+      Shortcuts.prototype.prev = function() {
+        var _prev;
+        _prev = app.currentCollection.prev(app.currentBlock);
+        return window.location.hash = "#/" + (app.currentChannel.get('slug')) + "/show:" + _prev.id;
+      };
+
+      Shortcuts.prototype.up = function() {
+        return window.location.hash = "#/" + (app.currentChannel.get('slug')) + "/overview";
+      };
+
+      return Shortcuts;
+
+    })(Backbone.Shortcuts);
+
+  }).call(this);
+  
+}});
+
 window.require.define({"views/single_view": function(exports, require, module) {
   (function() {
     var BlockView, template,
@@ -535,12 +587,16 @@ window.require.define({"views/single_view": function(exports, require, module) {
       SingleView.prototype.className = 'block';
 
       SingleView.prototype.initialize = function() {
-        return document.title = this.model.get('title') ? "" + (this.options.channel.get('title')) + ": " + (this.model.get('title')) : this.options.channel.get('title');
+        this.channel = this.options.channel;
+        app.currentChannel = this.channel;
+        app.currentBlock = this.model;
+        app.currentCollection = this.collection;
+        return document.title = this.model.get('title') ? "" + (this.channel.get('title')) + ": " + (this.model.get('title')) : this.channel.get('title');
       };
 
       SingleView.prototype.render = function(id) {
         this.$el.html(template({
-          channel: this.options.channel.toJSON(),
+          channel: this.channel.toJSON(),
           block: this.model.toJSON(),
           blocks: this.collection.toJSON(),
           next: this.collection.next(this.model),
