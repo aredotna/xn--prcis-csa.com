@@ -142,6 +142,9 @@ window.require.define({"helpers": function(exports, require, module) {
           },
           stop: function() {
             return $('body').removeClass('loading');
+          },
+          error: function() {
+            return $('body').removeClass('loading').addClass('error');
           }
         };
       };
@@ -267,7 +270,8 @@ window.require.define({"models/channel": function(exports, require, module) {
               return true;
             },
             error: function(error) {
-              return console.log(error);
+              _this.set('fetching', false);
+              return app.loading().error();
             }
           });
         }
@@ -312,6 +316,7 @@ window.require.define({"routers/main_router": function(exports, require, module)
       MainRouter.prototype.routes = {
         '': 'index',
         '/:slug': 'collection',
+        '/:slug/overview': 'overview',
         '/:slug/show::id': 'single'
       };
 
@@ -331,6 +336,18 @@ window.require.define({"routers/main_router": function(exports, require, module)
           return _this.navigate("//" + slug + "/show:" + (_this.channel.blocks.at(0).id), {
             trigger: true
           });
+        });
+      };
+
+      MainRouter.prototype.overview = function(slug) {
+        var _this = this;
+        return $.when(this.channel.maybeLoad(slug)).then(function() {
+          _this.collectionView = new CollectionView({
+            model: _this.channel,
+            collection: _this.channel.blocks,
+            mode: 'grid'
+          });
+          return $('body').attr('class', 'collection').html(_this.collectionView.render().el);
         });
       };
 
@@ -581,11 +598,15 @@ window.require.define({"views/templates/collection/grid": function(exports, requ
     (function() {
       (function() {
       
-        __out.push('<div id="modal" class="hide"></div>\n<div id="blocks" class="grid"></div>\n<h1>');
+        __out.push('<div class="area">\n  <header class="title">\n    <a class=\'btn\'href="/#/');
+      
+        __out.push(__sanitize(this.channel.slug));
+      
+        __out.push('">');
       
         __out.push(__sanitize(this.channel.title));
       
-        __out.push('</h1>');
+        __out.push('</a>\n  </header>\n</div>\n\n<div id="blocks" class="grid"></div>');
       
       }).call(this);
       
@@ -746,7 +767,7 @@ window.require.define({"views/templates/index": function(exports, require, modul
     (function() {
       (function() {
       
-        __out.push('<form id="channel">\n  <input id="channel_slug" name="channel[slug]" placeholder="Channel?" tabindex="0" />\n</form>');
+        __out.push('<div class="slide">\n  <div class="wrap">\n    <form id="channel" class="middle">\n      <input id="channel_slug" name="s" placeholder="are.na/#/..." tabindex="0" type=search />\n    </form>\n  </div>\n</div>');
       
       }).call(this);
       
@@ -797,35 +818,35 @@ window.require.define({"views/templates/single/grid": function(exports, require,
     (function() {
       (function() {
       
-        __out.push('<div class="thumb">\n  ');
-      
         if (this.block.image_thumb) {
-          __out.push('\n    <div class="image">\n      <a href="/#/');
+          __out.push('\n  <a href="/#/');
           __out.push(__sanitize(this.channel.slug));
           __out.push('/show:');
           __out.push(__sanitize(this.block.id));
-          __out.push('">\n        <img src="');
-          __out.push(__sanitize(this.block.image_thumb));
+          __out.push('">\n    <img src="http://d2ss1gpcas6f9e.cloudfront.net/?thumb=250x250%23&src=');
+          __out.push(__sanitize(this.block.image_original));
           __out.push('" alt="');
           __out.push(__sanitize(this.block.title));
-          __out.push('" />\n      </a>\n    </div>\n  ');
+          __out.push('" alt="');
+          __out.push(__sanitize(this.block.title));
+          __out.push('" />\n  </a>\n');
         } else if (this.block.title) {
-          __out.push('\n    <a href="/#/');
+          __out.push('\n  <a href="/#/');
           __out.push(__sanitize(this.channel.slug));
           __out.push('/show:');
           __out.push(__sanitize(this.block.id));
-          __out.push('">\n      ');
-          __out.push(__sanitize(_.str.prune(this.block.title, 30)));
-          __out.push('\n    </a>\n  ');
+          __out.push('">\n    ');
+          __out.push(__sanitize(_.str.prune(this.block.title, 20)));
+          __out.push('\n  </a>\n');
         } else {
-          __out.push('\n    <a href="/#/');
+          __out.push('\n  <a href="/#/');
           __out.push(__sanitize(this.channel.slug));
           __out.push('/show:');
           __out.push(__sanitize(this.block.id));
-          __out.push('">\n      Untitled\n    </a>\n  ');
+          __out.push('">\n    Untitled\n  </a>\n');
         }
       
-        __out.push('\n</div>');
+        __out.push('\n');
       
       }).call(this);
       
@@ -881,27 +902,17 @@ window.require.define({"views/templates/single/list": function(exports, require,
         if (this.prev || this.next) {
           __out.push('\n    <nav class=\'pagination\'>\n      ');
           if (this.prev) {
-            __out.push('\n        <a class=\'prev\' href="/#/');
+            __out.push('\n        <a class=\'prev btn\' href="/#/');
             __out.push(__sanitize(this.channel.slug));
             __out.push('/show:');
             __out.push(__sanitize(this.prev.id));
             __out.push('">Previous</a>\n      ');
           }
-          __out.push('\n\n      ');
-          if (this.channel.mode) {
-            __out.push('\n        <!-- <span class="meta-sep">|</span>\n        <a href="/#/');
-            __out.push(__sanitize(this.channel.slug));
-            __out.push('/mode:');
-            __out.push(__sanitize(this.channel.mode));
-            __out.push('">Up</a>\n        <span class="meta-sep">|</span> -->\n      ');
-          } else {
-            __out.push('\n        <!-- <span class="meta-sep">|</span>\n        <a href="/#/');
-            __out.push(__sanitize(this.channel.slug));
-            __out.push('">Up</a>\n        <span class="meta-sep">|</span> -->\n      ');
-          }
-          __out.push('\n\n      ');
+          __out.push('\n\n      <a class=\'btn\' href="/#/');
+          __out.push(__sanitize(this.channel.slug));
+          __out.push('/overview">Up</a>\n\n      ');
           if (this.next) {
-            __out.push('\n        <a class=\'next\' href="/#/');
+            __out.push('\n        <a class=\'next btn\' href="/#/');
             __out.push(__sanitize(this.channel.slug));
             __out.push('/show:');
             __out.push(__sanitize(this.next.id));
@@ -913,15 +924,15 @@ window.require.define({"views/templates/single/list": function(exports, require,
         __out.push('\n\n  <header class="title">\n    ');
       
         if (this.block.title) {
-          __out.push('\n      <a href="/#/');
+          __out.push('\n      <a class=\'btn\' href="/#/');
           __out.push(__sanitize(this.channel.slug));
           __out.push('/show:');
           __out.push(__sanitize(this.block.id));
           __out.push('">');
-          __out.push(__sanitize(this.block.title));
+          __out.push(__sanitize(_.str.prune(this.block.title, 30)));
           __out.push('</a>\n    ');
         } else {
-          __out.push('\n      <a href="/#/');
+          __out.push('\n      <a class=\'btn\' href="/#/');
           __out.push(__sanitize(this.channel.slug));
           __out.push('/show:');
           __out.push(__sanitize(this.block.id));

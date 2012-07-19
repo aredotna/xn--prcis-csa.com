@@ -19,7 +19,8 @@ class exports.Channel extends Backbone.Model
           app.loading().stop()
           return true
         error: (error) =>
-          console.log error
+          @set 'fetching', false
+          app.loading().error()
 
   setupBlocks: ->
     @blocks = new Blocks(@get('blocks'))

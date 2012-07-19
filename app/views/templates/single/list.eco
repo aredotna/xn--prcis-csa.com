@@ -2,30 +2,22 @@
   <% if @prev or @next: %>
     <nav class='pagination'>
       <% if @prev: %>
-        <a class='prev' href="/#/<%= @channel.slug %>/show:<%= @prev.id %>">Previous</a>
+        <a class='prev btn' href="/#/<%= @channel.slug %>/show:<%= @prev.id %>">Previous</a>
       <% end %>
 
-      <% if @channel.mode: %>
-        <!-- <span class="meta-sep">|</span>
-        <a href="/#/<%= @channel.slug %>/mode:<%= @channel.mode %>">Up</a>
-        <span class="meta-sep">|</span> -->
-      <% else: %>
-        <!-- <span class="meta-sep">|</span>
-        <a href="/#/<%= @channel.slug %>">Up</a>
-        <span class="meta-sep">|</span> -->
-      <% end %>
+      <a class='btn' href="/#/<%= @channel.slug %>/overview">Up</a>
 
       <% if @next: %>
-        <a class='next' href="/#/<%= @channel.slug %>/show:<%= @next.id %>">Next</a>
+        <a class='next btn' href="/#/<%= @channel.slug %>/show:<%= @next.id %>">Next</a>
       <% end %>
     </nav>
   <% end %>
 
   <header class="title">
     <% if @block.title: %>
-      <a href="/#/<%= @channel.slug %>/show:<%= @block.id %>"><%= @block.title %></a>
+      <a class='btn' href="/#/<%= @channel.slug %>/show:<%= @block.id %>"><%= _.str.prune(@block.title, 30) %></a>
     <% else: %>
-      <a href="/#/<%= @channel.slug %>/show:<%= @block.id %>">¶</a>
+      <a class='btn' href="/#/<%= @channel.slug %>/show:<%= @block.id %>">¶</a>
     <% end %>
   </header>
 </section>

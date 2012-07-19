@@ -3,7 +3,7 @@
 
 /* TEAM */
   Site: http://are.na
-  Location: New York, NY
+  Location: NYC
 
 /* SITE */
   Standards: HTML5, CSS3

@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic)
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans+Mono)
 @import 'nib'
 
 // VARIABLES
@@ -10,7 +10,8 @@ text_color       = #000
 link_color       = #000
 bg_color         = #eee
 max_width        = 720px
-serif_family     = 'Times New Roman', 'Times', serif
+serif_family     = 'Times New Roman', serif
+sans_family      = 'Droid Sans Mono', sans-serif
 
 // BASE
 // ----
@@ -19,14 +20,14 @@ serif_family     = 'Times New Roman', 'Times', serif
 
 html, body
   min-height: 100%
-  background-color: bg_color
   text-rendering: optimizeLegibility
   -webkit-font-smoothing: antialiased
 
 body
-  font-family: 'Ubuntu Mono', sans-serif
+  font-family: sans_family
   font-size: base_font_size
   line-height: base_line_height
+  font-weight: 400
   color: text_color
   
   a, a:visited
@@ -40,10 +41,25 @@ body
   &.loading
     background: #fff url('../images/load.gif') center center no-repeat
 
+  &.error
+    background: red
+
 h1, h2, h3, h4
   font-size: base_font_size
   line-height: base_line_height
   font-weight: normal
+
+input
+  border: 1px solid
+  border-color: #ddd #999 #999 #ddd
+  font-size: base_font_size * 2
+  padding: (unit/2) unit
+  transition: all 0.25s
+
+  &:focus
+    outline: none
+    box-shadow: 0 0 unit rgba(0,0,0,.25)
+
 
 // NON-SEMANTIC / UTILITY
 // -------
@@ -84,7 +100,7 @@ h1, h2, h3, h4
   z-index: 10
   clearfix()
 
-.pagination .next, .pagination .prev, header.title a
+.btn
   padding: (unit/3) (unit/2)
   display: block
   float: left
@@ -92,16 +108,16 @@ h1, h2, h3, h4
   color: #000
   text-shadow: 0 1px 0 rgba(255,255,255,.5);
   text-transform: uppercase
-  box-shadow: inset -2px -2px 0px #868a8e
-  border: 2px solid
-  border-color: #fff #000 #000 #fff
-  font-weight: bold
+  box-shadow: inset -1px -1px 0px #868a8e
+  border: 1px solid
+  border-color: #eee #ccc #ccc #eee
+  font-weight: 400
 
   &:hover
     color: #000
   &:active
-    box-shadow: inset 2px 2px 0px #868a8e
-    border-color: #000 #fff #fff #000
+    box-shadow: inset 1px 1px 0px #868a8e
+    border-color: #333 #eee #eee #333
 
 // PAGE TITLE
 // ----------
@@ -135,7 +151,7 @@ header.title
   // ------------
   .content
     width: max_width
-    margin: auto
+    margin: unit auto
     text-align: left
     font-family: serif_family
     font-size: base_font_size + 10
@@ -149,6 +165,7 @@ header.title
   right: 0
   bottom: 0
   left: 0
+  background-color: #eee
   overflow-y: scroll
 
   .wrap
@@ -163,6 +180,8 @@ header.title
       text-align: center
       vertical-align: middle
 
+      img
+        box-shadow: 2px 2px 2px rgba(0,0,0,.25)
 
 .metadata
   margin: base_line_height 0
@@ -170,3 +189,25 @@ header.title
     border-left: 2px solid #ccc
     padding-left: (base_line_height / 2)
     color: #666
+
+// OVERVIEW
+// --------
+#blocks.grid
+  background-color: #000
+  text-align: center
+
+  .block
+    width: 250px
+    height: 250px
+    display: inline-block
+    vertical-align: middle
+    transition: opacity 0.25s
+
+    &:hover
+      opacity: .5
+
+    a
+      display: inline-block
+      line-height: 250px
+      width: 100%
+      color: #fff

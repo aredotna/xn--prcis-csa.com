@@ -1,3 +1,7 @@
-<div id="modal" class="hide"></div>
+<div class="area">
+  <header class="title">
+    <a class='btn' href="/#/<%= @channel.slug %>"><%= @channel.title %></a>
+  </header>
+</div>
+
 <div id="blocks" class="grid"></div>
-<h1><%= @channel.title %></h1>

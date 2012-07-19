@@ -15,3 +15,7 @@ class exports.BrunchApplication
     stop: ->
       $('body').
         removeClass('loading')
+    error: ->
+      $('body').
+        removeClass('loading').
+        addClass('error')

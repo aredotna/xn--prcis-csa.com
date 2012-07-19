@@ -1,3 +1,7 @@
-<form id="channel">
-  <input id="channel_slug" name="channel[slug]" placeholder="Channel?" tabindex="0" />
-</form>
+<div class="slide">
+  <div class="wrap">
+    <form id="channel" class="middle">
+      <input id="channel_slug" name="s" placeholder="are.na/#/..." tabindex="0" type=search />
+    </form>
+  </div>
+</div>
