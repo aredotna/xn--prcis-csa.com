@@ -597,7 +597,7 @@ window.require.define({"views/templates/collection/grid": function(exports, requ
     (function() {
       (function() {
       
-        __out.push('<div class="area">\n  <header class="title">\n    <a class=\'btn\'href="/#/');
+        __out.push('<div class="area">\n  <header class="title">\n    <a class=\'btn\' href="/#/');
       
         __out.push(__sanitize(this.channel.slug));
       
