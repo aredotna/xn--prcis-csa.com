@@ -346,7 +346,8 @@ window.require.define({"routers/main_router": function(exports, require, module)
             collection: _this.channel.blocks,
             mode: 'grid'
           });
-          return $('body').attr('class', 'collection').html(_this.collectionView.render().el);
+          $('body').attr('class', 'collection').html(_this.collectionView.render().el);
+          return $('.thumb').lazyload();
         });
       };
 
@@ -822,11 +823,9 @@ window.require.define({"views/templates/single/grid": function(exports, require,
           __out.push(__sanitize(this.channel.slug));
           __out.push('/show:');
           __out.push(__sanitize(this.block.id));
-          __out.push('">\n    <img src="http://d2ss1gpcas6f9e.cloudfront.net/?thumb=250x250%23&src=');
+          __out.push('">\n    <img class="thumb" src="http://placehold.it/250x250&text=+" data-original="http://d2ss1gpcas6f9e.cloudfront.net/?thumb=250x250%23&src=');
           __out.push(__sanitize(this.block.image_original));
-          __out.push('" alt="');
-          __out.push(__sanitize(this.block.title));
-          __out.push('" alt="');
+          __out.push('"  width="250" heigh="250" alt="');
           __out.push(__sanitize(this.block.title));
           __out.push('" />\n  </a>\n');
         } else if (this.block.title) {
@@ -961,7 +960,7 @@ window.require.define({"views/templates/single/list": function(exports, require,
           __out.push(__sanitize(this.block.source_url));
           __out.push('" width="100%" height="100%" />\n    </div>\n\n  ');
         } else if (this.block.block_type === 'Image') {
-          __out.push('\n    <div class="slide">\n      <div class="wrap">\n        <a href="');
+          __out.push('\n    <div class="image slide">\n      <div class="wrap">\n        <a href="');
           __out.push(__sanitize(this.block.image_original));
           __out.push('" class="middle">\n          <img src="http://d2ss1gpcas6f9e.cloudfront.net/?resize=900x900%3E&src=');
           __out.push(__sanitize(this.block.image_original));
@@ -969,7 +968,7 @@ window.require.define({"views/templates/single/list": function(exports, require,
           __out.push(__sanitize(this.block.title));
           __out.push('" />\n        </a>\n      </div>\n    </div>\n\n  ');
         } else if (this.block.block_type === 'Text') {
-          __out.push('\n    <div class="slide">\n      <div class="wrap">\n        <div class="middle">\n          <div class="content">');
+          __out.push('\n    <div class="text slide">\n      <div class="wrap">\n        <div class="middle">\n          <div class="content">');
           __out.push(this.block.content);
           __out.push('</div>\n        </div>\n      </div>\n    </div>\n  ');
         }

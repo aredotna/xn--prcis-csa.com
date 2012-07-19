@@ -34,6 +34,8 @@ class exports.MainRouter extends Backbone.Router
       $('body')
         .attr('class', 'collection')
         .html @collectionView.render().el
+
+      $('.thumb').lazyload()
        
   single: (slug, id) ->
     $.when(@channel.maybeLoad slug).then =>
