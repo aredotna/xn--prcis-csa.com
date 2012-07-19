@@ -312,7 +312,6 @@ window.require.define({"routers/main_router": function(exports, require, module)
       MainRouter.prototype.routes = {
         '': 'index',
         '/:slug': 'collection',
-        '/:slug/mode::mode': 'collection',
         '/:slug/show::id': 'single'
       };
 
@@ -326,20 +325,12 @@ window.require.define({"routers/main_router": function(exports, require, module)
         return app.loading().stop();
       };
 
-      MainRouter.prototype.collection = function(slug, mode) {
+      MainRouter.prototype.collection = function(slug) {
         var _this = this;
-        if (mode == null) mode = 'list';
-        this.channel.set({
-          'mode': 'mode',
-          mode: mode
-        });
         return $.when(this.channel.maybeLoad(slug)).then(function() {
-          _this.collectionView = new CollectionView({
-            model: _this.channel,
-            collection: _this.channel.blocks,
-            mode: mode
+          return _this.navigate("//" + slug + "/show:" + (_this.channel.blocks.at(0).id), {
+            trigger: true
           });
-          return $('body').attr('class', 'collection').html(_this.collectionView.render().el);
         });
       };
 
@@ -486,7 +477,9 @@ window.require.define({"views/index_view": function(exports, require, module) {
 
       IndexView.prototype.go = function(e) {
         e.preventDefault();
-        return app.router.navigate("//" + (this.$('#channel_slug').val()));
+        return app.router.navigate("//" + (this.$('#channel_slug').val()), {
+          trigger: true
+        });
       };
 
       IndexView.prototype.render = function() {
@@ -648,6 +641,61 @@ window.require.define({"views/templates/collection/list": function(exports, requ
         __out.push(__sanitize(this.channel.title));
       
         __out.push('</h1>\n\n<div id="blocks" class="list"></div>');
+      
+      }).call(this);
+      
+    }).call(__obj);
+    __obj.safe = __objSafe, __obj.escape = __escape;
+    return __out.join('');
+  }
+}});
+
+window.require.define({"views/templates/collection/slideshow": function(exports, require, module) {
+  module.exports = function (__obj) {
+    if (!__obj) __obj = {};
+    var __out = [], __capture = function(callback) {
+      var out = __out, result;
+      __out = [];
+      callback.call(this);
+      result = __out.join('');
+      __out = out;
+      return __safe(result);
+    }, __sanitize = function(value) {
+      if (value && value.ecoSafe) {
+        return value;
+      } else if (typeof value !== 'undefined' && value != null) {
+        return __escape(value);
+      } else {
+        return '';
+      }
+    }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+    __safe = __obj.safe = function(value) {
+      if (value && value.ecoSafe) {
+        return value;
+      } else {
+        if (!(typeof value !== 'undefined' && value != null)) value = '';
+        var result = new String(value);
+        result.ecoSafe = true;
+        return result;
+      }
+    };
+    if (!__escape) {
+      __escape = __obj.escape = function(value) {
+        return ('' + value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      };
+    }
+    (function() {
+      (function() {
+      
+        __out.push('<h1>');
+      
+        __out.push(__sanitize(this.channel.title));
+      
+        __out.push('</h1>\n\n<div id="blocks" class="slideshow"></div>');
       
       }).call(this);
       
@@ -828,39 +876,59 @@ window.require.define({"views/templates/single/list": function(exports, require,
     (function() {
       (function() {
       
+        __out.push('<section class="area">\n  ');
+      
         if (this.prev || this.next) {
-          __out.push('\n  <nav class=\'pagination\'>\n    ');
+          __out.push('\n    <nav class=\'pagination\'>\n      ');
           if (this.prev) {
-            __out.push('\n      <a href="/#/');
+            __out.push('\n        <a class=\'prev\' href="/#/');
             __out.push(__sanitize(this.channel.slug));
             __out.push('/show:');
             __out.push(__sanitize(this.prev.id));
-            __out.push('">Previous</a>\n    ');
+            __out.push('">Previous</a>\n      ');
           }
-          __out.push('\n    ');
+          __out.push('\n\n      ');
           if (this.channel.mode) {
-            __out.push('\n      <span class="meta-sep">|</span>\n      <a href="/#/');
+            __out.push('\n        <!-- <span class="meta-sep">|</span>\n        <a href="/#/');
             __out.push(__sanitize(this.channel.slug));
             __out.push('/mode:');
             __out.push(__sanitize(this.channel.mode));
-            __out.push('">Up</a>\n      <span class="meta-sep">|</span>\n    ');
+            __out.push('">Up</a>\n        <span class="meta-sep">|</span> -->\n      ');
           } else {
-            __out.push('\n      <span class="meta-sep">|</span>\n      <a href="/#/');
+            __out.push('\n        <!-- <span class="meta-sep">|</span>\n        <a href="/#/');
             __out.push(__sanitize(this.channel.slug));
-            __out.push('">Up</a>\n      <span class="meta-sep">|</span>\n    ');
+            __out.push('">Up</a>\n        <span class="meta-sep">|</span> -->\n      ');
           }
-          __out.push('\n    ');
+          __out.push('\n\n      ');
           if (this.next) {
-            __out.push('\n      <a href="/#/');
+            __out.push('\n        <a class=\'next\' href="/#/');
             __out.push(__sanitize(this.channel.slug));
             __out.push('/show:');
             __out.push(__sanitize(this.next.id));
-            __out.push('">Next</a>\n    ');
+            __out.push('">Next</a>\n      ');
           }
-          __out.push('\n  </nav>\n');
+          __out.push('\n    </nav>\n  ');
         }
       
-        __out.push('\n\n<div id="block_');
+        __out.push('\n\n  <header class="title">\n    ');
+      
+        if (this.block.title) {
+          __out.push('\n      <a href="/#/');
+          __out.push(__sanitize(this.channel.slug));
+          __out.push('/show:');
+          __out.push(__sanitize(this.block.id));
+          __out.push('">');
+          __out.push(__sanitize(this.block.title));
+          __out.push('</a>\n    ');
+        } else {
+          __out.push('\n      <a href="/#/');
+          __out.push(__sanitize(this.channel.slug));
+          __out.push('/show:');
+          __out.push(__sanitize(this.block.id));
+          __out.push('">¶</a>\n    ');
+        }
+      
+        __out.push('\n  </header>\n</section>\n\n<div id="block_');
       
         __out.push(__sanitize(this.block.id));
       
@@ -872,75 +940,31 @@ window.require.define({"views/templates/single/list": function(exports, require,
       
         __out.push(__sanitize(this.block.block_type));
       
-        __out.push('">\n    <h3 class="title">\n      <a href="/#/');
-      
-        __out.push(__sanitize(this.channel.slug));
-      
-        __out.push('/show:');
-      
-        __out.push(__sanitize(this.block.id));
-      
-        __out.push('">¶</a>\n      ');
-      
-        if (this.block.title) {
-          __out.push('\n        <span class="meta-sep">|</span>\n        <a href="/#/');
-          __out.push(__sanitize(this.channel.slug));
-          __out.push('/show:');
-          __out.push(__sanitize(this.block.id));
-          __out.push('">\n          ');
-          __out.push(__sanitize(this.block.title));
-          __out.push('\n        </a>\n      ');
-        }
-      
-        __out.push('\n    </h3>\n\n  ');
+        __out.push('">\n  \n  ');
       
         if (this.block.block_type === 'Media') {
-          __out.push('\n    <!-- MEDIA -->\n    <div class="embed">\n      ');
-          if (this.block.embed_html) {
-            __out.push('\n        ');
-            __out.push(this.block.embed_html);
-            __out.push('\n      ');
-          } else {
-            __out.push('\n        <a href="');
-            __out.push(__sanitize(this.block.embed_source_url));
-            __out.push('" class="url external">\n          ');
-            __out.push(__sanitize(this.block.embed_source_url));
-            __out.push('\n        </a>\n      ');
-          }
+          __out.push('\n    <div class="embed occupy">\n      ');
+          __out.push(this.block.embed_html);
           __out.push('\n    </div>\n\n  ');
+        } else if (this.block.block_type === 'Link') {
+          __out.push('\n    <div class="link occupy">\n      <iframe src="');
+          __out.push(__sanitize(this.block.source_url));
+          __out.push('" width="100%" height="100%" />\n    </div>\n\n  ');
         } else if (this.block.block_type === 'Image') {
-          __out.push('\n    <!-- IMAGE -->\n    <a href="');
+          __out.push('\n    <div class="slide">\n      <div class="wrap">\n        <a href="');
           __out.push(__sanitize(this.block.image_original));
-          __out.push('" class="enlarge">\n      <img src="');
-          __out.push(__sanitize(this.block.image_display));
+          __out.push('" class="middle">\n          <img src="http://d2ss1gpcas6f9e.cloudfront.net/?resize=900x900%3E&src=');
+          __out.push(__sanitize(this.block.image_original));
           __out.push('" alt="');
           __out.push(__sanitize(this.block.title));
-          __out.push('" />\n    </a>\n\n  ');
-        } else if (this.block.block_type === 'Link') {
-          __out.push('\n    <!-- LINK -->\n    ');
-          if (this.block.image_display) {
-            __out.push('\n      <a href="');
-            __out.push(__sanitize(this.block.source_url));
-            __out.push('" class="external" target="_blank">\n        <img src="');
-            __out.push(__sanitize(this.block.image_display));
-            __out.push('" alt="');
-            __out.push(__sanitize(this.block.title));
-            __out.push('" />\n      </a>\n    ');
-          } else {
-            __out.push('\n      <p>\n        <a href="');
-            __out.push(__sanitize(this.block.source_url));
-            __out.push('" class="external url" target="_blank">');
-            __out.push(__sanitize(this.block.source_url));
-            __out.push('</a>\n      </p>\n    ');
-          }
-          __out.push('\n\n  ');
+          __out.push('" />\n        </a>\n      </div>\n    </div>\n\n  ');
         } else if (this.block.block_type === 'Text') {
-          __out.push('\n    <!-- TEXT -->\n    <div class="content">\n      ');
+          __out.push('\n    <div class="slide">\n      <div class="wrap">\n        <div class="middle">\n          <div class="content">');
           __out.push(this.block.content);
-          __out.push('\n    </div>\n  ');
+          __out.push('</div>\n        </div>\n      </div>\n    </div>\n  ');
         }
       
-        __out.push('\n\n\n  <div class="metadata">\n    ');
+        __out.push('\n\n\n  <!-- <div class="metadata">\n    ');
       
         if (this.block.description) {
           __out.push('\n      <div class="description">\n        ');
@@ -948,7 +972,7 @@ window.require.define({"views/templates/single/list": function(exports, require,
           __out.push('\n      </div>\n    ');
         }
       
-        __out.push('\n  </div>\n  \n</div><!-- #block -->');
+        __out.push('\n  </div> -->\n  \n</div><!-- #block -->');
       
       }).call(this);
       

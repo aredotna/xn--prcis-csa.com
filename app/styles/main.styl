@@ -1,32 +1,32 @@
-@import url(http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic)
+@import url(http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic)
 @import 'nib'
 
 // VARIABLES
 // ---------
 base_font_size   = 14px
 base_line_height = 20px
+unit             = base_line_height
 text_color       = #000
 link_color       = #000
+bg_color         = #eee
 max_width        = 720px
+serif_family     = 'Times New Roman', 'Times', serif
 
 // BASE
 // ----
 *
-  -webkit-box-sizing: border-box
-  -moz-box-sizing: border-box
   box-sizing: border-box
 
 html, body
   min-height: 100%
+  background-color: bg_color
+  text-rendering: optimizeLegibility
+  -webkit-font-smoothing: antialiased
 
 body
-  margin: (base_line_height * 4) auto
-  width: max_width
+  font-family: 'Ubuntu Mono', sans-serif
   font-size: base_font_size
   line-height: base_line_height
-  font-family: 'Droid Serif', serif
-  font-style: normal
-  font-weight: 400
   color: text_color
   
   a, a:visited
@@ -45,35 +45,6 @@ h1, h2, h3, h4
   line-height: base_line_height
   font-weight: normal
 
-h1
-  text-align: center
-  margin: base_line_height
-  text-decoration: underline
-
-h3, .description
-  font-size: base_font_size - 2
-  font-family: 'Lucida Grande', sans-serif
-
-nav
-  margin: base_line_height
-  text-align: center
-
-// STRUCTURE
-// ---------
-
-.full
-  padding: base_line_height 0
-  margin: base_line_height 0
-  img
-    border: 1px solid rgba(0,0,0,.1)
-
-.metadata
-  margin: base_line_height 0
-  .description
-    border-left: 2px solid #ccc
-    padding-left: (base_line_height / 2)
-    color: #666
-
 // NON-SEMANTIC / UTILITY
 // -------
 .hide
@@ -90,3 +61,112 @@ nav
   width: 21px
   height: 12px
   background: transparent url('../images/arena-mark.png') no-repeat center center
+
+// PAGINATION NAV
+// --------------
+.area
+  position: fixed
+  top: 0
+  left: 0
+  right: 0
+  height: unit*4
+  z-index: 1
+  opacity: 0
+  transition: opacity 0.25s
+  
+.area:hover
+  opacity: 100
+
+.pagination
+  position: fixed
+  top: unit
+  right: unit
+  z-index: 10
+  clearfix()
+
+.pagination .next, .pagination .prev, header.title a
+  padding: (unit/3) (unit/2)
+  display: block
+  float: left
+  background-color: rgba(255,255,255,.75)
+  color: #000
+  text-shadow: 0 1px 0 rgba(255,255,255,.5);
+  text-transform: uppercase
+  box-shadow: inset -2px -2px 0px #868a8e
+  border: 2px solid
+  border-color: #fff #000 #000 #fff
+  font-weight: bold
+
+  &:hover
+    color: #000
+  &:active
+    box-shadow: inset 2px 2px 0px #868a8e
+    border-color: #000 #fff #fff #000
+
+// PAGE TITLE
+// ----------
+header.title
+  position: fixed
+  top: unit
+  left: unit
+  z-index: 10
+  whitespace: nowrap
+  clearfix()
+
+// STRUCTURE
+// ---------
+.occupy
+  iframe, embed, object, &.middle-outer
+    position: fixed
+    top: 0
+    right: 0
+    bottom: 0
+    left: 0
+    width: 100%
+    height: 100%
+    z-index: -1
+    margin: 0
+    border: none
+
+.full
+  text-align: center
+  
+  // TEXT DISPLAY
+  // ------------
+  .content
+    width: max_width
+    margin: auto
+    text-align: left
+    font-family: serif_family
+    font-size: base_font_size + 10
+    line-height: base_line_height + 10
+
+// IMAGE DISPLAY
+// -------------
+.slide
+  position: fixed
+  top: 0
+  right: 0
+  bottom: 0
+  left: 0
+  overflow-y: scroll
+
+  .wrap
+    display: table
+    width: 100%
+    height: 100%
+
+    .middle
+      display: table-cell
+      width: 100%
+      height: 100%
+      text-align: center
+      vertical-align: middle
+
+
+.metadata
+  margin: base_line_height 0
+  .description
+    border-left: 2px solid #ccc
+    padding-left: (base_line_height / 2)
+    color: #666

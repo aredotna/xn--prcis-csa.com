@@ -8,9 +8,8 @@ class exports.IndexView extends Backbone.View
   initialize: -> document.title = 'Précis'
 
   go: (e) ->
-    # Doesn't work...
     e.preventDefault()
-    app.router.navigate "//#{@$('#channel_slug').val()}"
+    app.router.navigate "//#{@$('#channel_slug').val()}", { trigger: true }
 
   render: ->
     @$el.html template

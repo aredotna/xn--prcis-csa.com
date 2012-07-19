@@ -8,7 +8,6 @@ class exports.MainRouter extends Backbone.Router
   routes:
     ''                  : 'index'
     '/:slug'            : 'collection'
-    '/:slug/mode::mode' : 'collection'
     '/:slug/show::id'   : 'single'
 
   initialize: ->
@@ -21,17 +20,9 @@ class exports.MainRouter extends Backbone.Router
     
     app.loading().stop()
 
-  collection: (slug, mode = 'list') ->
-    @channel.set {'mode', mode}
-
+  collection: (slug) ->
     $.when(@channel.maybeLoad slug).then =>
-      @collectionView = new CollectionView
-        model      : @channel
-        collection : @channel.blocks
-        mode       : mode
-      $('body')
-        .attr('class', 'collection')
-        .html @collectionView.render().el
+      @navigate "//#{slug}/show:#{@channel.blocks.at(0).id}", { trigger: true }
 
   single: (slug, id) ->
     $.when(@channel.maybeLoad slug).then =>

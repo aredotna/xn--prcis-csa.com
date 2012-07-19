@@ -1,78 +1,73 @@
-<% if @prev or @next: %>
-  <nav class='pagination'>
-    <% if @prev: %>
-      <a href="/#/<%= @channel.slug %>/show:<%= @prev.id %>">Previous</a>
-    <% end %>
-    <% if @channel.mode: %>
-      <span class="meta-sep">|</span>
-      <a href="/#/<%= @channel.slug %>/mode:<%= @channel.mode %>">Up</a>
-      <span class="meta-sep">|</span>
+<section class="area">
+  <% if @prev or @next: %>
+    <nav class='pagination'>
+      <% if @prev: %>
+        <a class='prev' href="/#/<%= @channel.slug %>/show:<%= @prev.id %>">Previous</a>
+      <% end %>
+
+      <% if @channel.mode: %>
+        <!-- <span class="meta-sep">|</span>
+        <a href="/#/<%= @channel.slug %>/mode:<%= @channel.mode %>">Up</a>
+        <span class="meta-sep">|</span> -->
+      <% else: %>
+        <!-- <span class="meta-sep">|</span>
+        <a href="/#/<%= @channel.slug %>">Up</a>
+        <span class="meta-sep">|</span> -->
+      <% end %>
+
+      <% if @next: %>
+        <a class='next' href="/#/<%= @channel.slug %>/show:<%= @next.id %>">Next</a>
+      <% end %>
+    </nav>
+  <% end %>
+
+  <header class="title">
+    <% if @block.title: %>
+      <a href="/#/<%= @channel.slug %>/show:<%= @block.id %>"><%= @block.title %></a>
     <% else: %>
-      <span class="meta-sep">|</span>
-      <a href="/#/<%= @channel.slug %>">Up</a>
-      <span class="meta-sep">|</span>
+      <a href="/#/<%= @channel.slug %>/show:<%= @block.id %>">¶</a>
     <% end %>
-    <% if @next: %>
-      <a href="/#/<%= @channel.slug %>/show:<%= @next.id %>">Next</a>
-    <% end %>
-  </nav>
-<% end %>
+  </header>
+</section>
 
 <div id="block_<%= @block.id %>" class="full <%= @block.block_type.toLowerCase() %>" data-type="<%= @block.block_type %>">
-    <h3 class="title">
-      <a href="/#/<%= @channel.slug %>/show:<%= @block.id %>">¶</a>
-      <% if @block.title: %>
-        <span class="meta-sep">|</span>
-        <a href="/#/<%= @channel.slug %>/show:<%= @block.id %>">
-          <%= @block.title %>
-        </a>
-      <% end %>
-    </h3>
-
+  
   <% if @block.block_type is 'Media': %>
-    <!-- MEDIA -->
-    <div class="embed">
-      <% if @block.embed_html: %>
-        <%- @block.embed_html %>
-      <% else: %>
-        <a href="<%= @block.embed_source_url %>" class="url external">
-          <%= @block.embed_source_url %>
-        </a>
-      <% end %>
+    <div class="embed occupy">
+      <%- @block.embed_html %>
+    </div>
+
+  <% else if @block.block_type is 'Link': %>
+    <div class="link occupy">
+      <iframe src="<%= @block.source_url %>" width="100%" height="100%" />
     </div>
 
   <% else if @block.block_type is 'Image': %>
-    <!-- IMAGE -->
-    <a href="<%= @block.image_original %>" class="enlarge">
-      <img src="<%= @block.image_display %>" alt="<%= @block.title %>" />
-    </a>
-
-  <% else if @block.block_type is 'Link': %>
-    <!-- LINK -->
-    <% if @block.image_display: %>
-      <a href="<%= @block.source_url %>" class="external" target="_blank">
-        <img src="<%= @block.image_display %>" alt="<%= @block.title %>" />
-      </a>
-    <% else: %>
-      <p>
-        <a href="<%= @block.source_url %>" class="external url" target="_blank"><%= @block.source_url %></a>
-      </p>
-    <% end %>
+    <div class="slide">
+      <div class="wrap">
+        <a href="<%= @block.image_original %>" class="middle">
+          <img src="http://d2ss1gpcas6f9e.cloudfront.net/?resize=900x900%3E&src=<%= @block.image_original %>" alt="<%= @block.title %>" />
+        </a>
+      </div>
+    </div>
 
   <% else if @block.block_type is 'Text': %>
-    <!-- TEXT -->
-    <div class="content">
-      <%- @block.content %>
+    <div class="slide">
+      <div class="wrap">
+        <div class="middle">
+          <div class="content"><%- @block.content %></div>
+        </div>
+      </div>
     </div>
   <% end %>
 
 
-  <div class="metadata">
+  <!-- <div class="metadata">
     <% if @block.description: %>
       <div class="description">
         <%- @block.description %>
       </div>
     <% end %>
-  </div>
+  </div> -->
   
 </div><!-- #block -->
