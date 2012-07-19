@@ -595,6 +595,7 @@ window.require.define({"views/single_view": function(exports, require, module) {
       };
 
       SingleView.prototype.render = function(id) {
+        var _this = this;
         this.$el.html(template({
           channel: this.channel.toJSON(),
           block: this.model.toJSON(),
@@ -602,6 +603,10 @@ window.require.define({"views/single_view": function(exports, require, module) {
           next: this.collection.next(this.model),
           prev: this.collection.prev(this.model)
         }));
+        this.$el.waitForImages(function() {
+          _this.$('.slide').removeClass('loading');
+          return _this.$('.slide').addClass('done');
+        });
         return this;
       };
 
@@ -1016,7 +1021,7 @@ window.require.define({"views/templates/single/list": function(exports, require,
           __out.push(__sanitize(this.block.source_url));
           __out.push('" width="100%" height="100%" />\n    </div>\n\n  ');
         } else if (this.block.block_type === 'Image') {
-          __out.push('\n    <div class="image slide">\n      <div class="wrap">\n        <a href="');
+          __out.push('\n    <div class="image loading slide">\n      <div class="wrap">\n        <a href="');
           __out.push(__sanitize(this.block.image_original));
           __out.push('" class="middle">\n          <img src="http://d2ss1gpcas6f9e.cloudfront.net/?resize=900x900%3E&src=');
           __out.push(__sanitize(this.block.image_original));

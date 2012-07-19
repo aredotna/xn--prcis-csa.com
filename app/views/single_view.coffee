@@ -26,5 +26,10 @@ class exports.SingleView extends BlockView
       blocks  : @collection.toJSON()
       next    : @collection.next(@model)
       prev    : @collection.prev(@model)
+
+    @$el.waitForImages(=>
+      @$('.slide').removeClass('loading')
+      @$('.slide').addClass('done')
+    )
     
     return this

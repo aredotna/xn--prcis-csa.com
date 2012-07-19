@@ -162,9 +162,15 @@ header.title
   bottom: 0
   left: 0
   overflow-y: scroll
+  transition: opacity 0.05s
 
   &.image
-    background: #eee url('../images/loader_eee.gif') center center no-repeat
+      background: #fff
+    &.loading
+      opacity: 0
+      background: #eee url('../images/loader_eee.gif') center center no-repeat
+    &.done
+      opacity: 1
 
   .wrap
     display: table

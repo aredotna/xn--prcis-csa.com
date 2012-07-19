@@ -26,7 +26,8 @@ exports.config =
           'vendor/scripts/underscore.string.js',
           'vendor/scripts/jquery.lazyload.js',
           'vendor/scripts/keymaster.min.js',
-          'vendor/scripts/backbone.shortcuts.js'
+          'vendor/scripts/backbone.shortcuts.js',
+          'vendor/scripts/jquery.waitforimages.js'
         ]
 
     stylesheets:
