@@ -18,8 +18,7 @@ class exports.Channel extends Backbone.Model
           @set 'fetching', false
           app.loading().stop()
           return true
-        error: (error) =>
-          @set 'fetching', false
+        error:  ->
           app.loading().error()
 
   setupBlocks: ->

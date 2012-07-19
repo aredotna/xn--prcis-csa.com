@@ -1,7 +1,7 @@
 <div class="slide">
   <div class="wrap">
     <form id="channel" class="middle">
-      <input id="channel_slug" name="s" placeholder="are.na/#/..." tabindex="0" type=search />
+      <input id="channel_slug" name="s" placeholder="are.na/#/[public-channel]" tabindex="0" type=search />
     </form>
   </div>
 </div>
