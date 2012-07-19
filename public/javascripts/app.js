@@ -659,7 +659,7 @@ window.require.define({"views/templates/collection/grid": function(exports, requ
     (function() {
       (function() {
       
-        __out.push('<div class="area">\n  <header class="title">\n    <a class=\'btn\' href="/#/');
+        __out.push('<div class="area">\n  <header class="information">\n    <section class="title">\n      <a class=\'btn\' href="/#/');
       
         __out.push(__sanitize(this.channel.slug));
       
@@ -667,7 +667,7 @@ window.require.define({"views/templates/collection/grid": function(exports, requ
       
         __out.push(__sanitize(this.channel.title));
       
-        __out.push('</a>\n  </header>\n</div>\n\n<div id="blocks" class="grid"></div>');
+        __out.push('</a>\n    </section>\n  </header>\n</div>\n\n<div id="blocks" class="grid"></div>');
       
       }).call(this);
       
@@ -980,25 +980,33 @@ window.require.define({"views/templates/single/list": function(exports, require,
           __out.push('\n    </nav>\n  ');
         }
       
-        __out.push('\n\n  <header class="title">\n    ');
+        __out.push('\n\n  <header class="information">\n    <section class="title">\n      ');
       
         if (this.block.title) {
-          __out.push('\n      <a class=\'btn\' href="/#/');
+          __out.push('\n        <a class=\'btn\' href="/#/');
           __out.push(__sanitize(this.channel.slug));
           __out.push('/show:');
           __out.push(__sanitize(this.block.id));
           __out.push('">');
-          __out.push(__sanitize(_.str.prune(this.block.title, 30)));
-          __out.push('</a>\n    ');
+          __out.push(__sanitize(_.str.prune(this.block.title, 50)));
+          __out.push('</a>\n      ');
         } else {
-          __out.push('\n      <a class=\'btn\' href="/#/');
+          __out.push('\n        <a class=\'btn\' href="/#/');
           __out.push(__sanitize(this.channel.slug));
           __out.push('/show:');
           __out.push(__sanitize(this.block.id));
-          __out.push('">¶</a>\n    ');
+          __out.push('">¶</a>\n      ');
         }
       
-        __out.push('\n  </header>\n</section>\n\n<div id="block_');
+        __out.push('\n    </section>\n\n    <section class="metadata">\n      ');
+      
+        if (this.block.description) {
+          __out.push('\n        <div class="description">\n          ');
+          __out.push(this.block.description);
+          __out.push('\n        </div>\n      ');
+        }
+      
+        __out.push('\n    </section>\n  </header>\n</section>\n\n<div id="block_');
       
         __out.push(__sanitize(this.block.id));
       
@@ -1010,7 +1018,7 @@ window.require.define({"views/templates/single/list": function(exports, require,
       
         __out.push(__sanitize(this.block.block_type));
       
-        __out.push('">\n  \n  ');
+        __out.push('">\n  ');
       
         if (this.block.block_type === 'Media') {
           __out.push('\n    <div class="embed occupy">\n      ');
@@ -1034,15 +1042,7 @@ window.require.define({"views/templates/single/list": function(exports, require,
           __out.push('</div>\n        </div>\n      </div>\n    </div>\n  ');
         }
       
-        __out.push('\n\n\n  <!-- <div class="metadata">\n    ');
-      
-        if (this.block.description) {
-          __out.push('\n      <div class="description">\n        ');
-          __out.push(this.block.description);
-          __out.push('\n      </div>\n    ');
-        }
-      
-        __out.push('\n  </div> -->\n  \n</div><!-- #block -->');
+        __out.push('\n</div>');
       
       }).call(this);
       

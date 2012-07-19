@@ -1,6 +1,8 @@
 <div class="area">
-  <header class="title">
-    <a class='btn' href="/#/<%= @channel.slug %>"><%= @channel.title %></a>
+  <header class="information">
+    <section class="title">
+      <a class='btn' href="/#/<%= @channel.slug %>"><%= @channel.title %></a>
+    </section>
   </header>
 </div>
 

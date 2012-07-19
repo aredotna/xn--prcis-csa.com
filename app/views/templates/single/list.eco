@@ -13,17 +13,26 @@
     </nav>
   <% end %>
 
-  <header class="title">
-    <% if @block.title: %>
-      <a class='btn' href="/#/<%= @channel.slug %>/show:<%= @block.id %>"><%= _.str.prune(@block.title, 30) %></a>
-    <% else: %>
-      <a class='btn' href="/#/<%= @channel.slug %>/show:<%= @block.id %>">¶</a>
-    <% end %>
+  <header class="information">
+    <section class="title">
+      <% if @block.title: %>
+        <a class='btn' href="/#/<%= @channel.slug %>/show:<%= @block.id %>"><%= _.str.prune(@block.title, 50) %></a>
+      <% else: %>
+        <a class='btn' href="/#/<%= @channel.slug %>/show:<%= @block.id %>">¶</a>
+      <% end %>
+    </section>
+
+    <section class="metadata">
+      <% if @block.description: %>
+        <div class="description">
+          <%- @block.description %>
+        </div>
+      <% end %>
+    </section>
   </header>
 </section>
 
 <div id="block_<%= @block.id %>" class="full <%= @block.block_type.toLowerCase() %>" data-type="<%= @block.block_type %>">
-  
   <% if @block.block_type is 'Media': %>
     <div class="embed occupy">
       <%- @block.embed_html %>
@@ -52,14 +61,4 @@
       </div>
     </div>
   <% end %>
-
-
-  <!-- <div class="metadata">
-    <% if @block.description: %>
-      <div class="description">
-        <%- @block.description %>
-      </div>
-    <% end %>
-  </div> -->
-  
-</div><!-- #block -->
+</div>
