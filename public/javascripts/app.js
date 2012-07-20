@@ -998,15 +998,27 @@ window.require.define({"views/templates/single/list": function(exports, require,
           __out.push('">¶</a>\n      ');
         }
       
-        __out.push('\n    </section>\n\n    <section class="metadata">\n      ');
+        __out.push('\n    </section>\n\n    ');
       
-        if (this.block.description) {
-          __out.push('\n        <div class="description">\n          ');
-          __out.push(this.block.description);
-          __out.push('\n        </div>\n      ');
+        if (this.block.description || this.block.source_url) {
+          __out.push('\n      <section class="metadata">\n        ');
+          if (this.block.description) {
+            __out.push('\n          <div class="description">\n            ');
+            __out.push(this.block.description);
+            __out.push('\n          </div>\n        ');
+          }
+          __out.push('\n\n        ');
+          if (this.block.source_url) {
+            __out.push('\n          <div class="source-url">\n            <strong>Source:</strong>\n            <a href="');
+            __out.push(this.block.source_url);
+            __out.push('" target="_blank">\n              ');
+            __out.push(_.str.prune(this.block.source_url, 50));
+            __out.push('\n            </a>\n          </div>\n        ');
+          }
+          __out.push('\n      </section>\n    ');
         }
       
-        __out.push('\n    </section>\n  </header>\n</section>\n\n<div id="block_');
+        __out.push('\n  </header>\n</section>\n\n<div id="block_');
       
         __out.push(__sanitize(this.block.id));
       

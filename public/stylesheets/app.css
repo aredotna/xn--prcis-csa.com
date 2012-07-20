@@ -223,9 +223,10 @@ input:focus{outline:none;-webkit-box-shadow:0 0 20px rgba(0,0,0,0.25);-moz-box-s
 .pagination:after{clear:both}
 .btn{display:inline-block;background-color:#127fd2;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0, #36a8ea), color-stop(1, #127fd2));background-image:-webkit-linear-gradient(top, #36a8ea 0%, #127fd2 100%);background-image:-moz-linear-gradient(top, #36a8ea 0%, #127fd2 100%);background-image:linear-gradient(top, #36a8ea 0%, #127fd2 100%);-webkit-box-shadow:0 1px 0 0 rgba(255,255,255,0.40) inset,1px 0 0 0 rgba(255,255,255,0.40) inset,-1px 0 0 0 rgba(255,255,255,0.40) inset;-moz-box-shadow:0 1px 0 0 rgba(255,255,255,0.40) inset,1px 0 0 0 rgba(255,255,255,0.40) inset,-1px 0 0 0 rgba(255,255,255,0.40) inset;box-shadow:0 1px 0 0 rgba(255,255,255,0.40) inset,1px 0 0 0 rgba(255,255,255,0.40) inset,-1px 0 0 0 rgba(255,255,255,0.40) inset;border:solid 1px #035ea3;padding:0 10px;line-height:30px;text-align:center;font-weight:bold;color:#fff !important;text-shadow:0 -1px 0 rgba(0,0,0,0.25)}
 header.information{position:fixed;top:20px;left:20px;z-index:10;}
-header.information .metadata{zoom:1;background-color:#fff;max-width:500px;-webkit-box-shadow:2px 2px 2px rgba(0,0,0,0.13);-moz-box-shadow:2px 2px 2px rgba(0,0,0,0.13);box-shadow:2px 2px 2px rgba(0,0,0,0.13);margin-top:20px}
+header.information .metadata{zoom:1;padding:10px 10px 0 10px;background-color:#fff;max-width:500px;-webkit-box-shadow:2px 2px 2px rgba(0,0,0,0.13);-moz-box-shadow:2px 2px 2px rgba(0,0,0,0.13);box-shadow:2px 2px 2px rgba(0,0,0,0.13);margin-top:20px;}
 header.information .metadata:before,header.information .metadata:after{content:"";display:table}
 header.information .metadata:after{clear:both}
+header.information .metadata div{margin-bottom:10px}
 .occupy iframe,.occupy embed,.occupy object,.occupy.middle-outer{position:fixed;top:0;right:0;bottom:0;left:0;width:100%;height:100%;margin:0;border:none}
 .full{text-align:center;}
 .full .content{width:720px;margin:20px auto;text-align:left;font-family:'Times New Roman',serif;font-size:24px;line-height:30px;-webkit-font-smoothing:subpixel-antialiased}

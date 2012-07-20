@@ -22,13 +22,24 @@
       <% end %>
     </section>
 
-    <section class="metadata">
-      <% if @block.description: %>
-        <div class="description">
-          <%- @block.description %>
-        </div>
-      <% end %>
-    </section>
+    <% if @block.description or @block.source_url: %>
+      <section class="metadata">
+        <% if @block.description: %>
+          <div class="description">
+            <%- @block.description %>
+          </div>
+        <% end %>
+
+        <% if @block.source_url: %>
+          <div class="source-url">
+            <strong>Source:</strong>
+            <a href="<%- @block.source_url %>" target="_blank">
+              <%- _.str.prune(@block.source_url, 50) %>
+            </a>
+          </div>
+        <% end %>
+      </section>
+    <% end %>
   </header>
 </section>
 
