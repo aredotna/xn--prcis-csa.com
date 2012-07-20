@@ -46,7 +46,7 @@
   <% else if @block.block_type is 'Image': %>
     <div class="image loading slide">
       <div class="wrap">
-        <a href="<%= @block.image_original %>" class="middle">
+        <a href="<%= @block.image_original %>" class="middle" target="_blank">
           <img src="http://d2ss1gpcas6f9e.cloudfront.net/?resize=900x900%3E&src=<%= @block.image_original %>" alt="<%= @block.title %>" />
         </a>
       </div>

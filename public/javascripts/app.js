@@ -1031,7 +1031,7 @@ window.require.define({"views/templates/single/list": function(exports, require,
         } else if (this.block.block_type === 'Image') {
           __out.push('\n    <div class="image loading slide">\n      <div class="wrap">\n        <a href="');
           __out.push(__sanitize(this.block.image_original));
-          __out.push('" class="middle">\n          <img src="http://d2ss1gpcas6f9e.cloudfront.net/?resize=900x900%3E&src=');
+          __out.push('" class="middle" target="_blank">\n          <img src="http://d2ss1gpcas6f9e.cloudfront.net/?resize=900x900%3E&src=');
           __out.push(__sanitize(this.block.image_original));
           __out.push('" alt="');
           __out.push(__sanitize(this.block.title));
