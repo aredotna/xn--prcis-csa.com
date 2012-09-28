@@ -492,7 +492,7 @@ window.require.define({"views/index_view": function(exports, require, module) {
 
       IndexView.prototype.go = function(e) {
         e.preventDefault();
-        return app.router.navigate("//" + (this.$('#channel_slug').val()), {
+        return app.router.navigate("//" + (this.$('#channel_slug').val()) + "/overview", {
           trigger: true
         });
       };
@@ -817,7 +817,7 @@ window.require.define({"views/templates/index": function(exports, require, modul
     (function() {
       (function() {
       
-        __out.push('<div class="slide">\n  <div class="wrap">\n    <form id="channel" class="middle">\n      <input id="channel_slug" name="s" placeholder="are.na/#/[public-channel]" tabindex="0" type=search />\n    </form>\n  </div>\n</div>');
+        __out.push('<div class="slide">\n  <div class="wrap">\n    <form id="channel" class="middle">\n      <input id="channel_slug" name="s" tabindex="0" type=search />\n    </form>\n  </div>\n</div>');
       
       }).call(this);
       

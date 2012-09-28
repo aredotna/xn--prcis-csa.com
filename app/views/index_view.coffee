@@ -9,7 +9,7 @@ class exports.IndexView extends Backbone.View
 
   go: (e) ->
     e.preventDefault()
-    app.router.navigate "//#{@$('#channel_slug').val()}", { trigger: true }
+    app.router.navigate "//#{@$('#channel_slug').val()}/overview", { trigger: true }
 
   render: ->
     @$el.html template
