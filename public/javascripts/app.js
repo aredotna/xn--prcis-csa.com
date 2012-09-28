@@ -8,7 +8,7 @@
   var cache = {};
 
   var has = function(object, name) {
-    return hasOwnProperty.call(object, name);
+    return ({}).hasOwnProperty.call(object, name);
   };
 
   var expand = function(root, name) {
@@ -37,7 +37,7 @@
     return function(name) {
       var dir = dirname(path);
       var absolute = expand(dir, name);
-      return require(absolute);
+      return globals.require(absolute);
     };
   };
 
@@ -93,7 +93,7 @@ window.require.define({"collections/blocks": function(exports, require, module) 
       Blocks.prototype.model = Block;
 
       Blocks.prototype.comparator = function(model) {
-        return model.get('channel_connection').position;
+        return model.get('position');
       };
 
       Blocks.prototype.next = function(model) {
@@ -191,8 +191,7 @@ window.require.define({"initialize": function(exports, require, module) {
 
 window.require.define({"models/block": function(exports, require, module) {
   (function() {
-    var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-      __hasProp = Object.prototype.hasOwnProperty,
+    var __hasProp = Object.prototype.hasOwnProperty,
       __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
     exports.Block = (function(_super) {
@@ -200,13 +199,11 @@ window.require.define({"models/block": function(exports, require, module) {
       __extends(Block, _super);
 
       function Block() {
-        this.channelConnection = __bind(this.channelConnection, this);
         Block.__super__.constructor.apply(this, arguments);
       }
 
       Block.prototype.initialize = function() {
-        this.checkIfMissingImage();
-        return this.channelConnection();
+        return this.checkIfMissingImage();
       };
 
       Block.prototype.checkIfMissingImage = function() {
@@ -215,13 +212,6 @@ window.require.define({"models/block": function(exports, require, module) {
         if (this.get('image_thumb') === missing) {
           return this.set('image_thumb', null);
         }
-      };
-
-      Block.prototype.channelConnection = function() {
-        var _this = this;
-        return this.set('channel_connection', _.find(this.get('connections'), function(connection) {
-          return connection.channel_id === app.router.channel.id;
-        }));
       };
 
       Block.prototype.next = function() {
@@ -257,7 +247,7 @@ window.require.define({"models/channel": function(exports, require, module) {
       }
 
       Channel.prototype.url = function() {
-        return "http://are.na/api/v1/channels/" + (this.get('slug')) + ".json?callback=?";
+        return "http://api.are.na/v2/channels/" + (this.get('slug'));
       };
 
       Channel.prototype.maybeLoad = function(slug) {
@@ -284,7 +274,7 @@ window.require.define({"models/channel": function(exports, require, module) {
       };
 
       Channel.prototype.setupBlocks = function() {
-        return this.blocks = new Blocks(this.get('blocks'));
+        return this.blocks = new Blocks(this.get('contents'));
       };
 
       return Channel;
@@ -879,13 +869,13 @@ window.require.define({"views/templates/single/grid": function(exports, require,
     (function() {
       (function() {
       
-        if (this.block.image_thumb) {
+        if (this.block.image.thumb) {
           __out.push('\n  <a href="/#/');
           __out.push(__sanitize(this.channel.slug));
           __out.push('/show:');
           __out.push(__sanitize(this.block.id));
           __out.push('">\n    <img class="thumb" src="http://placehold.it/250x250&text=+" data-original="http://d2ss1gpcas6f9e.cloudfront.net/?thumb=250x250%23&src=');
-          __out.push(__sanitize(this.block.image_original));
+          __out.push(__sanitize(this.block.image.original.url));
           __out.push('"  width="250" heigh="250" alt="');
           __out.push(__sanitize(this.block.title));
           __out.push('" />\n  </a>\n');
@@ -1024,31 +1014,31 @@ window.require.define({"views/templates/single/list": function(exports, require,
       
         __out.push('" class="full ');
       
-        __out.push(__sanitize(this.block.block_type.toLowerCase()));
+        __out.push(__sanitize(this.block["class"].toLowerCase()));
       
         __out.push('" data-type="');
       
-        __out.push(__sanitize(this.block.block_type));
+        __out.push(__sanitize(this.block["class"]));
       
         __out.push('">\n  ');
       
-        if (this.block.block_type === 'Media') {
+        if (this.block["class"] === 'Media') {
           __out.push('\n    <div class="embed occupy">\n      ');
           __out.push(this.block.embed_html);
           __out.push('\n    </div>\n\n  ');
-        } else if (this.block.block_type === 'Link') {
+        } else if (this.block["class"] === 'Link') {
           __out.push('\n    <div class="link occupy">\n      <iframe src="');
           __out.push(__sanitize(this.block.source_url));
           __out.push('" width="100%" height="100%" />\n    </div>\n\n  ');
-        } else if (this.block.block_type === 'Image') {
+        } else if (this.block["class"] === 'Image') {
           __out.push('\n    <div class="image loading slide">\n      <div class="wrap">\n        <a href="');
-          __out.push(__sanitize(this.block.image_original));
+          __out.push(__sanitize(this.block.image.original.url));
           __out.push('" class="middle" target="_blank">\n          <img src="http://d2ss1gpcas6f9e.cloudfront.net/?resize=900x900%3E&src=');
-          __out.push(__sanitize(this.block.image_original));
+          __out.push(__sanitize(this.block.image.original.url));
           __out.push('" alt="');
           __out.push(__sanitize(this.block.title));
           __out.push('" />\n        </a>\n      </div>\n    </div>\n\n  ');
-        } else if (this.block.block_type === 'Text') {
+        } else if (this.block["class"] === 'Text') {
           __out.push('\n    <div class="text slide">\n      <div class="wrap">\n        <div class="middle">\n          <div class="content">');
           __out.push(this.block.content);
           __out.push('</div>\n        </div>\n      </div>\n    </div>\n  ');

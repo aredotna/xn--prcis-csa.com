@@ -43,27 +43,27 @@
   </header>
 </section>
 
-<div id="block_<%= @block.id %>" class="full <%= @block.block_type.toLowerCase() %>" data-type="<%= @block.block_type %>">
-  <% if @block.block_type is 'Media': %>
+<div id="block_<%= @block.id %>" class="full <%= @block.class.toLowerCase() %>" data-type="<%= @block.class %>">
+  <% if @block.class is 'Media': %>
     <div class="embed occupy">
       <%- @block.embed_html %>
     </div>
 
-  <% else if @block.block_type is 'Link': %>
+  <% else if @block.class is 'Link': %>
     <div class="link occupy">
       <iframe src="<%= @block.source_url %>" width="100%" height="100%" />
     </div>
 
-  <% else if @block.block_type is 'Image': %>
+  <% else if @block.class is 'Image': %>
     <div class="image loading slide">
       <div class="wrap">
-        <a href="<%= @block.image_original %>" class="middle" target="_blank">
-          <img src="http://d2ss1gpcas6f9e.cloudfront.net/?resize=900x900%3E&src=<%= @block.image_original %>" alt="<%= @block.title %>" />
+        <a href="<%= @block.image.original.url %>" class="middle" target="_blank">
+          <img src="http://d2ss1gpcas6f9e.cloudfront.net/?resize=900x900%3E&src=<%= @block.image.original.url %>" alt="<%= @block.title %>" />
         </a>
       </div>
     </div>
 
-  <% else if @block.block_type is 'Text': %>
+  <% else if @block.class is 'Text': %>
     <div class="text slide">
       <div class="wrap">
         <div class="middle">

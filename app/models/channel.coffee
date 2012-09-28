@@ -1,8 +1,8 @@
 {Blocks} = require 'collections/blocks'
 
 class exports.Channel extends Backbone.Model
-  url: ->
-    "http://are.na/api/v1/channels/#{@get('slug')}.json?callback=?"
+
+  url: -> "http://api.are.na/v2/channels/#{@get('slug')}"
 
   maybeLoad: (slug) ->
     if slug is @get('slug')
@@ -18,8 +18,6 @@ class exports.Channel extends Backbone.Model
           @set 'fetching', false
           app.loading().stop()
           return true
-        error:  ->
-          app.loading().error()
+        error:  -> app.loading().error()
 
-  setupBlocks: ->
-    @blocks = new Blocks(@get('blocks'))
+  setupBlocks: -> @blocks = new Blocks @get('contents')

@@ -1,7 +1,6 @@
 class exports.Block extends Backbone.Model
-  initialize: ->
-    @checkIfMissingImage()
-    @channelConnection()
+  
+  initialize: -> @checkIfMissingImage()
     
   checkIfMissingImage: ->
     # Check if the image actually is missing
@@ -9,10 +8,6 @@ class exports.Block extends Backbone.Model
     missing = '/assets/interface/missing.png'
     @set('image_thumb', null) if @get('image_thumb') is missing
 
-  channelConnection: =>
-    @set('channel_connection', _.find(@get('connections'), (connection) =>
-      connection.channel_id is app.router.channel.id)
-    )
+  next: -> @collection.next this
 
-  next: -> @collection.next(this)
-  prev: -> @collection.prev(this)
+  prev: -> @collection.prev this

@@ -10,8 +10,7 @@ class exports.CollectionView extends Backbone.View
     # Possible values: ['compact', 'list', 'grid', 'slideshow', 'scatter']
     @template = require "./templates/collection/#{@options.mode}"
 
-  addAll: ->
-    @collection.each @addOne
+  addAll: -> @collection.each @addOne
     
   addOne: (block) =>
     view = new BlockView

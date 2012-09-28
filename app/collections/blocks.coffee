@@ -4,7 +4,7 @@ class exports.Blocks extends Backbone.Collection
   model: Block
   
   comparator: (model) ->
-    model.get('channel_connection').position
+    model.get('position')
 
   next: (model) ->
     @at((@indexOf(model) + 1) % _.size(@models))
