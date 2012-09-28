@@ -26,7 +26,7 @@
       <section class="metadata">
         <% if @block.description: %>
           <div class="description">
-            <%- @block.description %>
+            <%- @block.description_html %>
           </div>
         <% end %>
 
@@ -58,7 +58,7 @@
     <div class="image loading slide">
       <div class="wrap">
         <a href="<%= @block.image.original.url %>" class="middle" target="_blank">
-          <img src="http://d2ss1gpcas6f9e.cloudfront.net/?resize=900x900%3E&src=<%= @block.image.original.url %>" alt="<%= @block.title %>" />
+          <img src="<%= @block.image.display.url %>" alt="<%= @block.title %>" />
         </a>
       </div>
     </div>
@@ -67,7 +67,7 @@
     <div class="text slide">
       <div class="wrap">
         <div class="middle">
-          <div class="content"><%- @block.content %></div>
+          <div class="content"><%- @block.content_html %></div>
         </div>
       </div>
     </div>

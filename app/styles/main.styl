@@ -93,11 +93,11 @@ input
   right: 0
   height: unit*4
   z-index: 1
-  opacity: 0
+  opacity: .5
   transition: opacity 0.25s
   
 .area:hover
-  opacity: 100
+  opacity: 1
 
 .pagination
   position: fixed
@@ -108,16 +108,13 @@ input
 
 .btn
   display: inline-block
-  background-color: rgba(18,127,210,1)
-  background-image: linear-gradient(top, rgba(54,168,234,1) 0%,rgba(18,127,210,1) 100%)
-  box-shadow: 0px 1px 0px 0px rgba(255,255,255,0.4) inset, 1px 0px 0px 0px rgba(255,255,255,0.4) inset, -1px 0px 0px 0px rgba(255,255,255,0.4) inset
-  border: solid 1px rgba(3,94,163,1)
+  background-color: rgba(0,0,0,.75)
+  
   padding: 0 (unit/2)
   line-height: unit*1.5
   text-align: center
-  font-weight: bold
   color: #fff !important
-  text-shadow: 0 -1px 0 rgba(0,0,0,.25)
+  text-shadow: -1px -1px 0 #000
 
 // PAGE TITLE
 // ----------
@@ -206,15 +203,25 @@ header.information
 // OVERVIEW
 // --------
 #blocks.grid
+  clearfix()
   background-color: #000
-  text-align: center
-  box-shadow: 0 3px 3px rgba(0,0,0,.25)
+  padding-top: unit*4
 
   .block
-    width: 250px
-    height: 250px
+    height: 200px
     display: inline-block
     transition: opacity 0.25s
+
+    .channel, .text
+      height: 100%
+      width: 200px
+      padding: 10px
+      background: #ccc
+      display: inline-block
+      vertical-align: bottom
+
+    .text
+      background: #aaa
 
     img
       vertical-align: bottom
@@ -223,7 +230,7 @@ header.information
       opacity: .5
 
     a
-      display: inline-block
-      line-height: 250px
+      display: block
+      height: 100%
       width: 100%
       color: #fff

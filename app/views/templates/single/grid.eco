@@ -1,13 +1,23 @@
-<% if @block.image.thumb: %>
-  <a href="/#/<%= @channel.slug %>/show:<%= @block.id %>">
-    <img class="thumb" src="http://placehold.it/250x250&text=+" data-original="http://d2ss1gpcas6f9e.cloudfront.net/?thumb=250x250%23&src=<%= @block.image.original.url %>"  width="250" heigh="250" alt="<%= @block.title %>" />
-  </a>
-<% else if @block.title: %>
-  <a href="/#/<%= @channel.slug %>/show:<%= @block.id %>">
+<% if @block.base_class is 'Block': %>
+  <% if @block.image: %>
+    <a href="/#/<%= @channel.slug %>/show:<%= @block.id %>">
+      <!-- <span class="thumb" style="background-image:url(<%= @block.image.thumb.url %>)"></span> -->
+      <img src="<%= @block.image.thumb.url %>" alt="<%= @block.id %>" />
+    </a>
+  <% else if @block.title: %>
+    <a href="/#/<%= @channel.slug %>/show:<%= @block.id %>" class="text">
+      <%= _.str.prune(@block.title, 20) %>
+    </a>
+  <% else: %>
+    <a href="/#/<%= @channel.slug %>/show:<%= @block.id %>" class="text">
+      Untitled
+    </a>
+  <% end %>
+<% end %>
+
+<% if @block.class is 'Channel' and @block.published: %>
+  <a href="/#/<%= @block.slug %>/overview" class="channel">
     <%= _.str.prune(@block.title, 20) %>
   </a>
-<% else: %>
-  <a href="/#/<%= @channel.slug %>/show:<%= @block.id %>">
-    Untitled
-  </a>
 <% end %>
+

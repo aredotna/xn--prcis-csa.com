@@ -345,8 +345,7 @@ window.require.define({"routers/main_router": function(exports, require, module)
             collection: _this.channel.blocks,
             mode: 'grid'
           });
-          $('body').attr('class', 'collection').html(_this.collectionView.render().el);
-          return $('.thumb').lazyload();
+          return $('body').attr('class', 'collection').html(_this.collectionView.render().el);
         });
       };
 
@@ -869,33 +868,49 @@ window.require.define({"views/templates/single/grid": function(exports, require,
     (function() {
       (function() {
       
-        if (this.block.image.thumb) {
-          __out.push('\n  <a href="/#/');
-          __out.push(__sanitize(this.channel.slug));
-          __out.push('/show:');
-          __out.push(__sanitize(this.block.id));
-          __out.push('">\n    <img class="thumb" src="http://placehold.it/250x250&text=+" data-original="http://d2ss1gpcas6f9e.cloudfront.net/?thumb=250x250%23&src=');
-          __out.push(__sanitize(this.block.image.original.url));
-          __out.push('"  width="250" heigh="250" alt="');
-          __out.push(__sanitize(this.block.title));
-          __out.push('" />\n  </a>\n');
-        } else if (this.block.title) {
-          __out.push('\n  <a href="/#/');
-          __out.push(__sanitize(this.channel.slug));
-          __out.push('/show:');
-          __out.push(__sanitize(this.block.id));
-          __out.push('">\n    ');
-          __out.push(__sanitize(_.str.prune(this.block.title, 20)));
-          __out.push('\n  </a>\n');
-        } else {
-          __out.push('\n  <a href="/#/');
-          __out.push(__sanitize(this.channel.slug));
-          __out.push('/show:');
-          __out.push(__sanitize(this.block.id));
-          __out.push('">\n    Untitled\n  </a>\n');
+        if (this.block.base_class === 'Block') {
+          __out.push('\n  ');
+          if (this.block.image) {
+            __out.push('\n    <a href="/#/');
+            __out.push(__sanitize(this.channel.slug));
+            __out.push('/show:');
+            __out.push(__sanitize(this.block.id));
+            __out.push('">\n      <!-- <span class="thumb" style="background-image:url(');
+            __out.push(__sanitize(this.block.image.thumb.url));
+            __out.push(')"></span> -->\n      <img src="');
+            __out.push(__sanitize(this.block.image.thumb.url));
+            __out.push('" alt="');
+            __out.push(__sanitize(this.block.id));
+            __out.push('" />\n    </a>\n  ');
+          } else if (this.block.title) {
+            __out.push('\n    <a href="/#/');
+            __out.push(__sanitize(this.channel.slug));
+            __out.push('/show:');
+            __out.push(__sanitize(this.block.id));
+            __out.push('" class="text">\n      ');
+            __out.push(__sanitize(_.str.prune(this.block.title, 20)));
+            __out.push('\n    </a>\n  ');
+          } else {
+            __out.push('\n    <a href="/#/');
+            __out.push(__sanitize(this.channel.slug));
+            __out.push('/show:');
+            __out.push(__sanitize(this.block.id));
+            __out.push('" class="text">\n      Untitled\n    </a>\n  ');
+          }
+          __out.push('\n');
         }
       
-        __out.push('\n');
+        __out.push('\n\n');
+      
+        if (this.block["class"] === 'Channel' && this.block.published) {
+          __out.push('\n  <a href="/#/');
+          __out.push(__sanitize(this.block.slug));
+          __out.push('/overview" class="channel">\n    ');
+          __out.push(__sanitize(_.str.prune(this.block.title, 20)));
+          __out.push('\n  </a>\n');
+        }
+      
+        __out.push('\n\n');
       
       }).call(this);
       
@@ -994,7 +1009,7 @@ window.require.define({"views/templates/single/list": function(exports, require,
           __out.push('\n      <section class="metadata">\n        ');
           if (this.block.description) {
             __out.push('\n          <div class="description">\n            ');
-            __out.push(this.block.description);
+            __out.push(this.block.description_html);
             __out.push('\n          </div>\n        ');
           }
           __out.push('\n\n        ');
@@ -1033,14 +1048,14 @@ window.require.define({"views/templates/single/list": function(exports, require,
         } else if (this.block["class"] === 'Image') {
           __out.push('\n    <div class="image loading slide">\n      <div class="wrap">\n        <a href="');
           __out.push(__sanitize(this.block.image.original.url));
-          __out.push('" class="middle" target="_blank">\n          <img src="http://d2ss1gpcas6f9e.cloudfront.net/?resize=900x900%3E&src=');
-          __out.push(__sanitize(this.block.image.original.url));
+          __out.push('" class="middle" target="_blank">\n          <img src="');
+          __out.push(__sanitize(this.block.image.display.url));
           __out.push('" alt="');
           __out.push(__sanitize(this.block.title));
           __out.push('" />\n        </a>\n      </div>\n    </div>\n\n  ');
         } else if (this.block["class"] === 'Text') {
           __out.push('\n    <div class="text slide">\n      <div class="wrap">\n        <div class="middle">\n          <div class="content">');
-          __out.push(this.block.content);
+          __out.push(this.block.content_html);
           __out.push('</div>\n        </div>\n      </div>\n    </div>\n  ');
         }
       
