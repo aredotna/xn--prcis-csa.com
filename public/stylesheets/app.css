@@ -216,6 +216,7 @@ input:focus{outline:none;-webkit-box-shadow:0 0 20px rgba(0,0,0,0.25);-moz-box-s
 .show{display:block}
 .meta-sep{color:#ccc;margin:0 5px}
 .arena-mark{width:21px;height:12px;background:transparent url("../images/arena-mark.png") no-repeat center center}
+#url_base{font-size:24px}
 .area{position:fixed;top:0;left:0;right:0;height:80px;z-index:1;opacity:.5;filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=50);-webkit-transition:opacity .25s;-moz-transition:opacity .25s;transition:opacity .25s}
 .area:hover{opacity:1;filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=100)}
 .pagination{position:fixed;top:20px;right:20px;z-index:10;zoom:1}

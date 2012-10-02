@@ -12,10 +12,11 @@ class exports.MainRouter extends Backbone.Router
     '/:slug/show::id'   : 'single'
 
   initialize: ->
-    @indexView = new IndexView()
     @channel = new Channel()
 
   index: ->
+    @indexView = new IndexView()
+    
     $('body')
       .html @indexView.render().el
     app.loading().stop()

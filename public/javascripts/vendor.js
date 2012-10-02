@@ -12162,6 +12162,192 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 
 }(this || window));;
 
+//     keymaster.js
+//     (c) 2011 Thomas Fuchs
+//     keymaster.js may be freely distributed under the MIT license.
+(function(a){function h(a,b){var c=a.length;while(c--)if(a[c]===b)return c;return-1}function i(a){var b,g,i,j,k;b=a.keyCode;if(b==93||b==224)b=91;if(b in d){d[b]=!0;for(i in f)f[i]==b&&(l[i]=!0);return}if(!l.filter.call(this,a))return;if(!(b in c))return;for(j=0;j<c[b].length;j++){g=c[b][j];if(g.scope==e||g.scope=="all"){k=g.mods.length>0;for(i in d)if(!d[i]&&h(g.mods,+i)>-1||d[i]&&h(g.mods,+i)==-1)k=!1;(g.mods.length==0&&!d[16]&&!d[18]&&!d[17]&&!d[91]||k)&&g.method(a,g)===!1&&(a.preventDefault?a.preventDefault():a.returnValue=!1,a.stopPropagation&&a.stopPropagation(),a.cancelBubble&&(a.cancelBubble=!0))}}}function j(a){var b=a.keyCode,c;if(b==93||b==224)b=91;if(b in d){d[b]=!1;for(c in f)f[c]==b&&(l[c]=!1)}}function k(){for(b in d)d[b]=!1;for(b in f)l[b]=!1}function l(a,b,d){var e,h,i,j;d===undefined&&(d=b,b="all"),a=a.replace(/\s/g,""),e=a.split(","),e[e.length-1]==""&&(e[e.length-2]+=",");for(i=0;i<e.length;i++){h=[],a=e[i].split("+");if(a.length>1){h=a.slice(0,a.length-1);for(j=0;j<h.length;j++)h[j]=f[h[j]];a=[a[a.length-1]]}a=a[0],a=g[a]||a.toUpperCase().charCodeAt(0),a in c||(c[a]=[]),c[a].push({shortcut:e[i],scope:b,method:d,key:e[i],mods:h})}}function m(a){var b=(a.target||a.srcElement).tagName;return b!="INPUT"&&b!="SELECT"&&b!="TEXTAREA"}function n(a){e=a||"all"}function o(){return e||"all"}function p(a){var b,d,e;for(b in c){d=c[b];for(e=0;e<d.length;)d[e].scope===a?d.splice(e,1):e++}}function q(a,b,c){a.addEventListener?a.addEventListener(b,c,!1):a.attachEvent&&a.attachEvent("on"+b,function(){c(window.event)})}var b,c={},d={16:!1,18:!1,17:!1,91:!1},e="all",f={"⇧":16,shift:16,"⌥":18,alt:18,option:18,"⌃":17,ctrl:17,control:17,"⌘":91,command:91},g={backspace:8,tab:9,clear:12,enter:13,"return":13,esc:27,escape:27,space:32,left:37,up:38,right:39,down:40,del:46,"delete":46,home:36,end:35,pageup:33,pagedown:34,",":188,".":190,"/":191,"`":192,"-":189,"=":187,";":186,"'":222,"[":219,"]":221,"\\":220};for(b=1;b<20;b++)f["f"+b]=111+b;for(b in f)l[b]=!1;q(document,"keydown",i),q(document,"keyup",j),q(window,"focus",k),a.key=l,a.key.setScope=n,a.key.getScope=o,a.key.deleteScope=p,a.key.filter=m,typeof module!="undefined"&&(module.exports=key)})(this);;
+
+(function() {
+  var Shortcuts;
+
+  Shortcuts = function(options) {
+    this.cid = _.uniqueId("backbone.shortcuts");
+    this.initialize.apply(this, arguments);
+    return this.delegateShortcuts();
+  };
+
+  _.extend(Shortcuts.prototype, Backbone.Events, {
+    initialize: function() {},
+    delegateShortcuts: function() {
+      var callback, match, method, scope, shortcut, shortcutKey, _ref, _results;
+      if (!this.shortcuts) return;
+      _ref = this.shortcuts;
+      _results = [];
+      for (shortcut in _ref) {
+        callback = _ref[shortcut];
+        if (!_.isFunction(callback)) method = this[callback];
+        if (!method) throw new Error("Method " + callback + " does not exist");
+        match = shortcut.match(/^(\S+)\s*(.*)$/);
+        shortcutKey = match[1];
+        scope = match[2] === "" ? "all" : match[2];
+        method = _.bind(method, this);
+        _results.push(key(shortcutKey, scope, method));
+      }
+      return _results;
+    }
+  });
+
+  Backbone.Shortcuts = Shortcuts;
+
+  Backbone.Shortcuts.extend = Backbone.View.extend;
+
+}).call(this);;
+
+/*
+ * waitForImages 1.4
+ * -----------------
+ * Provides a callback when all images have loaded in your given selector.
+ * http://www.alexanderdickson.com/
+ *
+ *
+ * Copyright (c) 2011 Alex Dickson
+ * Licensed under the MIT licenses.
+ * See website for more info.
+ *
+ */
+
+;(function($) {
+    // Namespace all events.
+    var eventNamespace = 'waitForImages';
+
+    // CSS properties which contain references to images. 
+    $.waitForImages = {
+        hasImageProperties: [
+        'backgroundImage',
+        'listStyleImage',
+        'borderImage',
+        'borderCornerImage'
+        ]
+    };
+    
+    // Custom selector to find `img` elements that have a valid `src` attribute and have not already loaded.
+    $.expr[':'].uncached = function(obj) {
+        // Ensure we are dealing with an `img` element with a valid `src` attribute.
+        if ( ! $(obj).is('img[src!=""]')) {
+            return false;
+        }
+
+        // Firefox's `complete` property will always be`true` even if the image has not been downloaded.
+        // Doing it this way works in Firefox.
+        var img = document.createElement('img');
+        img.src = obj.src;
+        return ! img.complete;
+    };
+
+    $.fn.waitForImages = function(finishedCallback, eachCallback, waitForAll) {
+
+        // Handle options object.
+        if ($.isPlainObject(arguments[0])) {
+            eachCallback = finishedCallback.each;
+            waitForAll = finishedCallback.waitForAll;
+            finishedCallback = finishedCallback.finished;
+        }
+
+        // Handle missing callbacks.
+        finishedCallback = finishedCallback || $.noop;
+        eachCallback = eachCallback || $.noop;
+
+        // Convert waitForAll to Boolean
+        waitForAll = !! waitForAll;
+
+        // Ensure callbacks are functions.
+        if (!$.isFunction(finishedCallback) || !$.isFunction(eachCallback)) {
+            throw new TypeError('An invalid callback was supplied.');
+        };
+
+        return this.each(function() {
+            // Build a list of all imgs, dependent on what images will be considered.
+            var obj = $(this),
+                allImgs = [];
+
+            if (waitForAll) {
+                // CSS properties which may contain an image.
+                var hasImgProperties = $.waitForImages.hasImageProperties || [],
+                    matchUrl = /url\((['"]?)(.*?)\1\)/g;
+                
+                // Get all elements, as any one of them could have a background image.
+                obj.find('*').each(function() {
+                    var element = $(this);
+
+                    // If an `img` element, add it. But keep iterating in case it has a background image too.
+                    if (element.is('img:uncached')) {
+                        allImgs.push({
+                            src: element.attr('src'),
+                            element: element[0]
+                        });
+                    }
+
+                    $.each(hasImgProperties, function(i, property) {
+                        var propertyValue = element.css(property);
+                        // If it doesn't contain this property, skip.
+                        if ( ! propertyValue) {
+                            return true;
+                        }
+
+                        // Get all url() of this element.
+                        var match;
+                        while (match = matchUrl.exec(propertyValue)) {
+                            allImgs.push({
+                                src: match[2],
+                                element: element[0]
+                            });
+                        };
+                    });
+                });
+            } else {
+                // For images only, the task is simpler.
+                obj
+                 .find('img:uncached')
+                 .each(function() {
+                    allImgs.push({
+                        src: this.src,
+                        element: this
+                    });
+                });
+            };
+
+            var allImgsLength = allImgs.length,
+                allImgsLoaded = 0;
+
+            // If no images found, don't bother.
+            if (allImgsLength == 0) {
+                finishedCallback.call(obj[0]);
+            };
+
+            $.each(allImgs, function(i, img) {
+                
+                var image = new Image;
+                
+                // Handle the image loading and error with the same callback.
+                $(image).bind('load.' + eventNamespace + ' error.' + eventNamespace, function(event) {
+                    allImgsLoaded++;
+                    
+                    // If an error occurred with loading the image, set the third argument accordingly.
+                    eachCallback.call(img.element, allImgsLoaded, allImgsLength, event.type == 'load');
+                    
+                    if (allImgsLoaded == allImgsLength) {
+                        finishedCallback.call(obj[0]);
+                        return false;
+                    };
+                    
+                });
+
+                image.src = img.src;
+            });
+        });
+    };
+})(jQuery);;
+
 /*
  * Lazy Load - jQuery plugin for lazy loading images
  *
@@ -12373,190 +12559,4 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 
 })(jQuery, window);
 ;
-
-//     keymaster.js
-//     (c) 2011 Thomas Fuchs
-//     keymaster.js may be freely distributed under the MIT license.
-(function(a){function h(a,b){var c=a.length;while(c--)if(a[c]===b)return c;return-1}function i(a){var b,g,i,j,k;b=a.keyCode;if(b==93||b==224)b=91;if(b in d){d[b]=!0;for(i in f)f[i]==b&&(l[i]=!0);return}if(!l.filter.call(this,a))return;if(!(b in c))return;for(j=0;j<c[b].length;j++){g=c[b][j];if(g.scope==e||g.scope=="all"){k=g.mods.length>0;for(i in d)if(!d[i]&&h(g.mods,+i)>-1||d[i]&&h(g.mods,+i)==-1)k=!1;(g.mods.length==0&&!d[16]&&!d[18]&&!d[17]&&!d[91]||k)&&g.method(a,g)===!1&&(a.preventDefault?a.preventDefault():a.returnValue=!1,a.stopPropagation&&a.stopPropagation(),a.cancelBubble&&(a.cancelBubble=!0))}}}function j(a){var b=a.keyCode,c;if(b==93||b==224)b=91;if(b in d){d[b]=!1;for(c in f)f[c]==b&&(l[c]=!1)}}function k(){for(b in d)d[b]=!1;for(b in f)l[b]=!1}function l(a,b,d){var e,h,i,j;d===undefined&&(d=b,b="all"),a=a.replace(/\s/g,""),e=a.split(","),e[e.length-1]==""&&(e[e.length-2]+=",");for(i=0;i<e.length;i++){h=[],a=e[i].split("+");if(a.length>1){h=a.slice(0,a.length-1);for(j=0;j<h.length;j++)h[j]=f[h[j]];a=[a[a.length-1]]}a=a[0],a=g[a]||a.toUpperCase().charCodeAt(0),a in c||(c[a]=[]),c[a].push({shortcut:e[i],scope:b,method:d,key:e[i],mods:h})}}function m(a){var b=(a.target||a.srcElement).tagName;return b!="INPUT"&&b!="SELECT"&&b!="TEXTAREA"}function n(a){e=a||"all"}function o(){return e||"all"}function p(a){var b,d,e;for(b in c){d=c[b];for(e=0;e<d.length;)d[e].scope===a?d.splice(e,1):e++}}function q(a,b,c){a.addEventListener?a.addEventListener(b,c,!1):a.attachEvent&&a.attachEvent("on"+b,function(){c(window.event)})}var b,c={},d={16:!1,18:!1,17:!1,91:!1},e="all",f={"⇧":16,shift:16,"⌥":18,alt:18,option:18,"⌃":17,ctrl:17,control:17,"⌘":91,command:91},g={backspace:8,tab:9,clear:12,enter:13,"return":13,esc:27,escape:27,space:32,left:37,up:38,right:39,down:40,del:46,"delete":46,home:36,end:35,pageup:33,pagedown:34,",":188,".":190,"/":191,"`":192,"-":189,"=":187,";":186,"'":222,"[":219,"]":221,"\\":220};for(b=1;b<20;b++)f["f"+b]=111+b;for(b in f)l[b]=!1;q(document,"keydown",i),q(document,"keyup",j),q(window,"focus",k),a.key=l,a.key.setScope=n,a.key.getScope=o,a.key.deleteScope=p,a.key.filter=m,typeof module!="undefined"&&(module.exports=key)})(this);;
-
-(function() {
-  var Shortcuts;
-
-  Shortcuts = function(options) {
-    this.cid = _.uniqueId("backbone.shortcuts");
-    this.initialize.apply(this, arguments);
-    return this.delegateShortcuts();
-  };
-
-  _.extend(Shortcuts.prototype, Backbone.Events, {
-    initialize: function() {},
-    delegateShortcuts: function() {
-      var callback, match, method, scope, shortcut, shortcutKey, _ref, _results;
-      if (!this.shortcuts) return;
-      _ref = this.shortcuts;
-      _results = [];
-      for (shortcut in _ref) {
-        callback = _ref[shortcut];
-        if (!_.isFunction(callback)) method = this[callback];
-        if (!method) throw new Error("Method " + callback + " does not exist");
-        match = shortcut.match(/^(\S+)\s*(.*)$/);
-        shortcutKey = match[1];
-        scope = match[2] === "" ? "all" : match[2];
-        method = _.bind(method, this);
-        _results.push(key(shortcutKey, scope, method));
-      }
-      return _results;
-    }
-  });
-
-  Backbone.Shortcuts = Shortcuts;
-
-  Backbone.Shortcuts.extend = Backbone.View.extend;
-
-}).call(this);;
-
-/*
- * waitForImages 1.4
- * -----------------
- * Provides a callback when all images have loaded in your given selector.
- * http://www.alexanderdickson.com/
- *
- *
- * Copyright (c) 2011 Alex Dickson
- * Licensed under the MIT licenses.
- * See website for more info.
- *
- */
-
-;(function($) {
-    // Namespace all events.
-    var eventNamespace = 'waitForImages';
-
-    // CSS properties which contain references to images. 
-    $.waitForImages = {
-        hasImageProperties: [
-        'backgroundImage',
-        'listStyleImage',
-        'borderImage',
-        'borderCornerImage'
-        ]
-    };
-    
-    // Custom selector to find `img` elements that have a valid `src` attribute and have not already loaded.
-    $.expr[':'].uncached = function(obj) {
-        // Ensure we are dealing with an `img` element with a valid `src` attribute.
-        if ( ! $(obj).is('img[src!=""]')) {
-            return false;
-        }
-
-        // Firefox's `complete` property will always be`true` even if the image has not been downloaded.
-        // Doing it this way works in Firefox.
-        var img = document.createElement('img');
-        img.src = obj.src;
-        return ! img.complete;
-    };
-
-    $.fn.waitForImages = function(finishedCallback, eachCallback, waitForAll) {
-
-        // Handle options object.
-        if ($.isPlainObject(arguments[0])) {
-            eachCallback = finishedCallback.each;
-            waitForAll = finishedCallback.waitForAll;
-            finishedCallback = finishedCallback.finished;
-        }
-
-        // Handle missing callbacks.
-        finishedCallback = finishedCallback || $.noop;
-        eachCallback = eachCallback || $.noop;
-
-        // Convert waitForAll to Boolean
-        waitForAll = !! waitForAll;
-
-        // Ensure callbacks are functions.
-        if (!$.isFunction(finishedCallback) || !$.isFunction(eachCallback)) {
-            throw new TypeError('An invalid callback was supplied.');
-        };
-
-        return this.each(function() {
-            // Build a list of all imgs, dependent on what images will be considered.
-            var obj = $(this),
-                allImgs = [];
-
-            if (waitForAll) {
-                // CSS properties which may contain an image.
-                var hasImgProperties = $.waitForImages.hasImageProperties || [],
-                    matchUrl = /url\((['"]?)(.*?)\1\)/g;
-                
-                // Get all elements, as any one of them could have a background image.
-                obj.find('*').each(function() {
-                    var element = $(this);
-
-                    // If an `img` element, add it. But keep iterating in case it has a background image too.
-                    if (element.is('img:uncached')) {
-                        allImgs.push({
-                            src: element.attr('src'),
-                            element: element[0]
-                        });
-                    }
-
-                    $.each(hasImgProperties, function(i, property) {
-                        var propertyValue = element.css(property);
-                        // If it doesn't contain this property, skip.
-                        if ( ! propertyValue) {
-                            return true;
-                        }
-
-                        // Get all url() of this element.
-                        var match;
-                        while (match = matchUrl.exec(propertyValue)) {
-                            allImgs.push({
-                                src: match[2],
-                                element: element[0]
-                            });
-                        };
-                    });
-                });
-            } else {
-                // For images only, the task is simpler.
-                obj
-                 .find('img:uncached')
-                 .each(function() {
-                    allImgs.push({
-                        src: this.src,
-                        element: this
-                    });
-                });
-            };
-
-            var allImgsLength = allImgs.length,
-                allImgsLoaded = 0;
-
-            // If no images found, don't bother.
-            if (allImgsLength == 0) {
-                finishedCallback.call(obj[0]);
-            };
-
-            $.each(allImgs, function(i, img) {
-                
-                var image = new Image;
-                
-                // Handle the image loading and error with the same callback.
-                $(image).bind('load.' + eventNamespace + ' error.' + eventNamespace, function(event) {
-                    allImgsLoaded++;
-                    
-                    // If an error occurred with loading the image, set the third argument accordingly.
-                    eachCallback.call(img.element, allImgsLoaded, allImgsLength, event.type == 'load');
-                    
-                    if (allImgsLoaded == allImgsLength) {
-                        finishedCallback.call(obj[0]);
-                        return false;
-                    };
-                    
-                });
-
-                image.src = img.src;
-            });
-        });
-    };
-})(jQuery);;
 

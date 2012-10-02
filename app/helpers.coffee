@@ -11,9 +11,11 @@ class exports.BrunchApplication
     start: ->
       $('body').
         html('').
+        removeClass('error').
         addClass('loading')
     stop: ->
       $('body').
+        removeClass('error').
         removeClass('loading')
     error: ->
       $('body').

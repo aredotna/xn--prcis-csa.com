@@ -1,7 +1,8 @@
 <div class="slide">
   <div class="wrap">
     <form id="channel" class="middle">
-      <input id="channel_slug" name="s" tabindex="0" type=search />
+      <span id="url_base">http://are.na/</span>
+      <input id="channel_slug" tabindex="0" type="text" placeholder="channel-title" />
     </form>
   </div>
 </div>

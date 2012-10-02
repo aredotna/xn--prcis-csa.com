@@ -134,10 +134,10 @@ window.require.define({"helpers": function(exports, require, module) {
       BrunchApplication.prototype.loading = function() {
         return {
           start: function() {
-            return $('body').html('').addClass('loading');
+            return $('body').html('').removeClass('error').addClass('loading');
           },
           stop: function() {
-            return $('body').removeClass('loading');
+            return $('body').removeClass('error').removeClass('loading');
           },
           error: function() {
             return $('body').removeClass('loading').addClass('error');
@@ -317,11 +317,11 @@ window.require.define({"routers/main_router": function(exports, require, module)
       };
 
       MainRouter.prototype.initialize = function() {
-        this.indexView = new IndexView();
         return this.channel = new Channel();
       };
 
       MainRouter.prototype.index = function() {
+        this.indexView = new IndexView();
         $('body').html(this.indexView.render().el);
         return app.loading().stop();
       };
@@ -490,9 +490,23 @@ window.require.define({"views/index_view": function(exports, require, module) {
         return document.title = 'Précis';
       };
 
+      IndexView.prototype.to_slug = function(str) {
+        var from, i, to, _ref;
+        str = str.replace(/^\s+|\s+$/g, "").toLowerCase();
+        from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;";
+        to = "aaaaeeeeiiiioooouuuunc------";
+        for (i = i, _ref = from.length; i <= _ref ? i <= _ref : i >= _ref; i <= _ref ? i++ : i--) {
+          str = str.replace(new RegExp(from.charAt(i), "g"), to.charAt(i));
+        }
+        str = str.replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-");
+        return str;
+      };
+
       IndexView.prototype.go = function(e) {
+        var slug;
         e.preventDefault();
-        return app.router.navigate("//" + (this.$('#channel_slug').val()) + "/overview", {
+        slug = this.$('#channel_slug').val();
+        return app.router.navigate("//" + (this.to_slug(slug)) + "/overview", {
           trigger: true
         });
       };
@@ -817,7 +831,7 @@ window.require.define({"views/templates/index": function(exports, require, modul
     (function() {
       (function() {
       
-        __out.push('<div class="slide">\n  <div class="wrap">\n    <form id="channel" class="middle">\n      <input id="channel_slug" name="s" tabindex="0" type=search />\n    </form>\n  </div>\n</div>');
+        __out.push('<div class="slide">\n  <div class="wrap">\n    <form id="channel" class="middle">\n      <span id="url_base">http://are.na/</span>\n      <input id="channel_slug" tabindex="0" type="text" placeholder="channel-title" />\n    </form>\n  </div>\n</div>');
       
       }).call(this);
       
