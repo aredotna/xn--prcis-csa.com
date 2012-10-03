@@ -7,6 +7,11 @@ class exports.BrunchApplication
   initialize: ->
     null
 
+  parseReferrer: ->
+    parser = document.createElement('a')
+    parser.href = document.referrer
+    return parser
+
   loading: ->
     start: ->
       $('body').
@@ -21,3 +26,4 @@ class exports.BrunchApplication
       $('body').
         removeClass('loading').
         addClass('error')
+        

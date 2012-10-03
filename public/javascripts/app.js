@@ -131,6 +131,13 @@ window.require.define({"helpers": function(exports, require, module) {
         return null;
       };
 
+      BrunchApplication.prototype.parseReferrer = function() {
+        var parser;
+        parser = document.createElement('a');
+        parser.href = document.referrer;
+        return parser;
+      };
+
       BrunchApplication.prototype.loading = function() {
         return {
           start: function() {
@@ -320,10 +327,22 @@ window.require.define({"routers/main_router": function(exports, require, module)
         return this.channel = new Channel();
       };
 
+      MainRouter.prototype.redirectToChannel = function() {
+        var path, test;
+        if (app.parseReferrer().host === 'are.na') {
+          test = "/damon-zucconi/show:18483";
+          path = app.parseReferrer().pathname.split("/")[1];
+          return this.navigate("//" + path + "/overview", {
+            trigger: true
+          });
+        }
+      };
+
       MainRouter.prototype.index = function() {
         this.indexView = new IndexView();
         $('body').html(this.indexView.render().el);
-        return app.loading().stop();
+        app.loading().stop();
+        return this.redirectToChannel();
       };
 
       MainRouter.prototype.collection = function(slug) {
