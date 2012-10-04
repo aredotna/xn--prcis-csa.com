@@ -328,13 +328,14 @@ window.require.define({"routers/main_router": function(exports, require, module)
       };
 
       MainRouter.prototype.redirectToChannel = function() {
-        var path, test;
+        var path;
         if (app.parseReferrer().host === 'are.na') {
-          test = "/damon-zucconi/show:18483";
           path = app.parseReferrer().pathname.split("/")[1];
-          return this.navigate("//" + path + "/overview", {
-            trigger: true
-          });
+          if (!/show:/.test(path)) {
+            return this.navigate("//" + path + "/overview", {
+              trigger: true
+            });
+          }
         }
       };
 

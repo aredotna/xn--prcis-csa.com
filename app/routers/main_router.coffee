@@ -15,10 +15,13 @@ class exports.MainRouter extends Backbone.Router
     @channel = new Channel()
 
   redirectToChannel: ->
+    # Test if coming from are.na
     if app.parseReferrer().host is 'are.na'
-      test = "/damon-zucconi/show:18483"
+      # Extract out the channel slug
       path = app.parseReferrer().pathname.split("/")[1]
-      @navigate "//#{path}/overview", { trigger: true }
+      # Ensure the slug isn't really a block show: action
+      unless /show:/.test(path)
+        @navigate "//#{path}/overview", { trigger: true }
 
   index: ->
     @indexView = new IndexView()
