@@ -20,5 +20,9 @@ nbproject
 Thumbs.db
 .rvmrc
 
+# Brunch folder for temporary files.
+tmp/
+public
+
 # Config files
 config/*
