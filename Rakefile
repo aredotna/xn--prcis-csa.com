@@ -31,12 +31,11 @@ end
 namespace :deploy do
   task :static do
     puts 'Compressing...'
-    # `jammit -o public -c config/assets.yml`
     `brunch build --minify`
 
     puts 'Deploying...'
-    _s3 = S3Helper.connection('static')
-    _bucket = _s3.buckets[S3Helper.config['static']['bucket']]
+    _s3 = S3Helper.connection('present')
+    _bucket = _s3.buckets[S3Helper.config['present']['bucket']]
 
     Dir.glob("./public/**/*.*").each do |f|
       puts "Uploading: #{f}, #{Upload.mime_type(f)}"
