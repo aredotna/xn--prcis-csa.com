@@ -46,12 +46,12 @@
 <div id="block_<%= @block.id %>" class="full <%= @block.class.toLowerCase() %>" data-type="<%= @block.class %>">
   <% if @block.class is 'Media': %>
     <div class="embed occupy">
-      <%- @block.embed_html %>
+      <%- @block.embed.html %>
     </div>
 
   <% else if @block.class is 'Link': %>
     <div class="link occupy">
-      <iframe src="<%= @block.source_url %>" width="100%" height="100%" />
+      <iframe src="<%= @block.source.url %>" width="100%" height="100%" />
     </div>
 
   <% else if @block.class is 'Image': %>

@@ -13,7 +13,7 @@ class exports.SingleView extends BlockView
     app.currentCollection = @collection
 
     # Set the page title
-    document.title = 
+    document.title =
       if @model.get 'title'
         "#{@channel.get 'title'}: #{@model.get 'title'}"
       else
@@ -31,5 +31,5 @@ class exports.SingleView extends BlockView
       @$('.slide').removeClass('loading')
       @$('.slide').addClass('done')
     )
-    
+
     return this
